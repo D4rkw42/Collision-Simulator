@@ -1,4 +1,4 @@
-// Variáveis globais
+// Variáveis globais do sistema
 
 #pragma once
 

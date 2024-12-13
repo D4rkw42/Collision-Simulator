@@ -28,13 +28,13 @@ class Line {
 
         // utilities
 
-        static std::vector<Coord> FindLineLimits(Line line); // retorna os pontos limite de uma semireta
-        static Coord* FindLineIntersection(Line origin, Line target); // encontra a interseção entre duas semiretas
+        static std::vector<Coord> FindLineLimits(std::shared_ptr<Line> line); // retorna os pontos limite de uma semireta
+        static Coord* FindLineIntersection(std::shared_ptr<Line> origin, std::shared_ptr<Line> target); // encontra a interseção entre duas semiretas
 
-        static std::vector<double> GetLineLawCoeficients(Line line); // obtém os coeficientes da lei da reta
-        static bool IsPointAtLine(Coord coord, Line line); // verifica se um ponto pertence a uma reta
+        static std::vector<double> GetLineLawCoeficients(std::shared_ptr<Line> line); // obtém os coeficientes da lei da reta
+        static bool IsPointAtLine(Coord coord, std::shared_ptr<Line> line); // verifica se um ponto pertence a uma reta
 
-        static bool LineCollision(Line origin, Line target); // verifica se duas semiretas estão colidindo
+        static bool LineCollision(std::shared_ptr<Line> origin, std::shared_ptr<Line> target); // verifica se duas semiretas estão colidindo
         
 };
 
@@ -54,4 +54,15 @@ inline std::shared_ptr<Line> CreateLine(Coord from, Coord to, double velX, doubl
     double y = from.y + (dist/2) * sin(angle);
 
     return CreateLine(Coord { x, y }, velX, velY, dist, angle, color);
+}
+
+// Criação dinâmica para listas
+inline void CreateLine(LineList& list, Coord coord, double velX, double velY, double length, double angle = 0, RGBA color = RGBA_RED) {
+    auto line = CreateLine(coord, velX, velY, length, angle, color);
+    list.push_back(line);
+}
+
+inline void CreateLine(LineList& list, Coord from, Coord to, double velX, double velY, RGBA color = RGBA_RED) {
+    auto line = CreateLine(from, to, velX, velY, color);
+    list.push_back(line);
 }

@@ -2,6 +2,8 @@
 
 #include "Shape.hpp"
 
+#include <iostream>
+
 Shape::Shape(int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color) {
     if (vertex < 3) {
         throw new std::exception();

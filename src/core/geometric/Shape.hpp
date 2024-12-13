@@ -30,7 +30,16 @@ class Shape {
 
 };
 
+// Definições
+typedef std::vector<std::shared_ptr<Shape>> ShapeList;
+
 // Criação dinâmica de formas
 inline std::shared_ptr<Shape> CreateShape(int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color = RGBA_RED) {
     return std::make_shared<Shape>(vertex, size, coord, angle, velX, velY, velAng, color);
+}
+
+// Criação dinâmica para listas
+inline void CreateShape(ShapeList& list, int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color = RGBA_RED) {
+    auto shape = CreateShape(vertex, size, coord, angle, velX, velY, velAng, color);
+    list.push_back(shape);
 }

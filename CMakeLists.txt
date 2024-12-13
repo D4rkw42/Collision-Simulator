@@ -41,7 +41,10 @@ add_executable(
     src/app/event-handler.cpp
     
     src/core/geometric/Line.cpp
-    src/core/geometric/Shape.cpp)
+    src/core/geometric/Shape.cpp
+    src/core/geometric/colliders.cpp
+    
+    src/core/physics/physics.cpp)
 
 # linking external libraries
 

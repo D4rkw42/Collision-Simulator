@@ -31,7 +31,8 @@ void Line::Update(int deltatime) {
 
 void Line::Render(std::shared_ptr<Window> window) {
     // Obtendo pontos para desenho
-    auto Points = Line::FindLineLimits(*this);
+    std::shared_ptr<Line> line = std::make_shared<Line>(*this);
+    auto Points = Line::FindLineLimits(line);
 
     SDL_SetRenderDrawColor(window->renderer, this->color.r, this->color.g, this->color.b, this->color.a);
     SDL_RenderDrawLine(window->renderer, Points[0].x, Points[0].y, Points[1].x, Points[1].y);
@@ -40,18 +41,18 @@ void Line::Render(std::shared_ptr<Window> window) {
 // utilities
 
 // Retorna os pontos limites de uma semireta
-std::vector<Coord> Line::FindLineLimits(Line line) {
+std::vector<Coord> Line::FindLineLimits(std::shared_ptr<Line> line) {
     // Encontrando ângulos
-    double angle = line.angle;
+    double angle = line->angle;
 
     // Encontrando os pontos
-    double Length = line.length / 2;
+    double Length = line->length / 2;
 
-    double x1 = line.coord.x + Length * cos(angle);
-    double y1 = line.coord.y + Length * sin(angle);
+    double x1 = line->coord.x + Length * cos(angle);
+    double y1 = line->coord.y + Length * sin(angle);
 
-    double x2 = line.coord.x + Length * -cos(angle);
-    double y2 = line.coord.y + Length * -sin(angle);
+    double x2 = line->coord.x + Length * -cos(angle);
+    double y2 = line->coord.y + Length * -sin(angle);
 
     // A ordem dos dados deve ser a mesma
     if (x1 > x2) {
@@ -69,7 +70,7 @@ std::vector<Coord> Line::FindLineLimits(Line line) {
 }
 
 // Encontra a interseção entre duas semiretas
-Coord* Line::FindLineIntersection(Line origin, Line target) {
+Coord* Line::FindLineIntersection(std::shared_ptr<Line> origin, std::shared_ptr<Line> target) {
     auto OriginPoints = FindLineLimits(origin);
     auto TargetPoints = FindLineLimits(target);
 
@@ -97,7 +98,7 @@ Coord* Line::FindLineIntersection(Line origin, Line target) {
     return new Coord { x, y };
 }
 
-std::vector<double> Line::GetLineLawCoeficients(Line line) {
+std::vector<double> Line::GetLineLawCoeficients(std::shared_ptr<Line> line) {
     auto points = FindLineLimits(line);
 
     // Encontrando os coeficientes da reta
@@ -107,7 +108,7 @@ std::vector<double> Line::GetLineLawCoeficients(Line line) {
     return std::vector { aCoef, bCoef };
 }
 
-bool Line::IsPointAtLine(Coord coord, Line line) {
+bool Line::IsPointAtLine(Coord coord, std::shared_ptr<Line> line) {
     std::vector<double> lineCoeficients = Line::GetLineLawCoeficients(line);
 
     double
@@ -118,11 +119,11 @@ bool Line::IsPointAtLine(Coord coord, Line line) {
     double yTest = coord.x * a + b;
 
     // Se o valor teórico for igual ao valor real, o ponto pertence à reta
-    return abs(yTest - coord.y) < 0.5f;
+    return abs(yTest - coord.y) < 0.001f;
 }
 
 // Verifica se duas semiretas estão colidindo
-bool Line::LineCollision(Line origin, Line target) {
+bool Line::LineCollision(std::shared_ptr<Line> origin, std::shared_ptr<Line> target) {
     // Obtendo a interseção das linhas
     auto Intersection = FindLineIntersection(origin, target);
 
@@ -137,9 +138,9 @@ bool Line::LineCollision(Line origin, Line target) {
     auto originLimits = Line::FindLineLimits(origin);
 
     // Verifica cada ponto principal da reta origin, se está sobre a reta target
-    if (Line::IsPointAtLine(origin.coord, target) || Line::IsPointAtLine(originLimits[0], target) || Line::IsPointAtLine(originLimits[1], target)) {
-        return true;
-    }
+    //if (Line::IsPointAtLine(origin->coord, target) || Line::IsPointAtLine(originLimits[0], target) || Line::IsPointAtLine(originLimits[1], target)) {
+    //    return true;
+    //}
 
     auto OriginPoints = FindLineLimits(origin);
     auto TargetPoints = FindLineLimits(target);
