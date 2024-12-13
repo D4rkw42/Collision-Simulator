@@ -6,10 +6,9 @@
 #include "config/config.hpp"
 
 #include "config/SDL2/graphics/Window.hpp"
-#include "core/geometric/Line.hpp"
+#include "core/geometric/Shape.hpp"
 
-Line line1 = Line(Coord { 100, 100 }, 0, 0, 100, PI/2);
-Line line2 = Line(Coord { 150, 100 }, 0, 0, 100, PI/2);
+auto shape = CreateShape(20, 200, Coord { 200, 200 }, 0, 0.05f, 0, 0.005f);
 
 void ApplicationInitialize(void) {
     window = CreateWindow(PROJECT_NAME);
@@ -22,16 +21,7 @@ void ApplicationQuit(void) {
 //
 
 void ApplicationUpdate(int deltatime) {
-    line1.Update(deltatime);
-    line2.Update(deltatime);
-
-    line1.color = RGBA_RED;
-    line2.color = RGBA_RED;
-
-    if (Line::LineCollision(line1, line2)) {
-        line1.color = RGBA_GREEN;
-        line2.color = RGBA_GREEN;
-    }
+    shape->Update(deltatime);
 }
 
 void ApplicationRender(int deltatime) {
@@ -39,8 +29,7 @@ void ApplicationRender(int deltatime) {
     window->Clear();
 
     // Render
-    line1.Render(window);
-    line2.Render(window);
+    shape->Render(window);
 
     // Renderiza os gráficos
     window->Render();

@@ -27,19 +27,6 @@ Line::Line(Coord coord, double velX, double velY, double length, double angle, R
 void Line::Update(int deltatime) {
     this->coord.x += this->velX;
     this->coord.y += this->velY;
-
-    static double velAngle = 0.0001f;
-    velAngle *= 1;
-
-    this->angle += velAngle;
-
-    if (this->angle > PI * 2) {
-        this->angle = 0;
-    }
-
-    if (this->angle < 0) {
-        this->angle = PI * 2;
-    }
 }
 
 void Line::Render(std::shared_ptr<Window> window) {
