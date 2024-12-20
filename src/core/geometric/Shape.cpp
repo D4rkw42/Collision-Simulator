@@ -28,14 +28,22 @@ void Shape::Update(int deltatime) {
     this->coord.x += this->VelX;
     this->coord.y += this->VelY;
 
-    this->Angle += this->VelAng;
+    //this->Angle += this->VelAng;
+
+    if (this->Angle > rad(360)) {
+        this->Angle -= rad(360);
+    }
+
+    if (this->Angle < 0) {
+        this->Angle += rad(360);
+    }
 }
 
-void Shape::Render(std::shared_ptr<Window> window) {
+void Shape::Render(std::shared_ptr<Window> window, std::shared_ptr<Camera> camera) {
     LineList shapeLines = GetShapeLines();
 
     for (auto line : shapeLines) {
-        line->Render(window);
+        line->Render(window, camera);
     }
 }
 

@@ -11,6 +11,8 @@
 #include "core/geometric/Line.hpp"
 #include "core/geometric/RGBAColor.hpp"
 
+#include "utils/camera.hpp"
+
 class Shape {
     public:
         Coord coord;
@@ -24,7 +26,7 @@ class Shape {
         Shape(int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color);
 
         void Update(int deltatime);
-        void Render(std::shared_ptr<Window> window);
+        void Render(std::shared_ptr<Window> window, std::shared_ptr<Camera> camera);
 
         LineList GetShapeLines(void);
 

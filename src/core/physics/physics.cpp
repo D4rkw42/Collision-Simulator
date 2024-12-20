@@ -2,7 +2,10 @@
 
 #include "physics.hpp"
 
+#include <iostream>
 #include <cmath>
+
+#include "core/geometric/basic.hpp"
 
 void BodyElasticCollision(double &velX1, double &velY1, double &velX2, double &velY2) {
     double dVelX = velX1 - velX2;
@@ -16,7 +19,8 @@ void BodyElasticCollision(double &velX1, double &velY1, double &velX2, double &v
 
     velY2 += dVelY * ELASTIC_COEFFICIENT * abs(sin(angle));
     velY1 -= dVelY * ELASTIC_COEFFICIENT * abs(sin(angle));
+}
 
-    // Verificação e correção de velocidade terminal
-
+void ApplyTorqueByCollision(double &velAngle1, double &velAngle2, double x1, double y1, double x2, double y2, double size1, double size2) {
+    
 }

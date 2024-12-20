@@ -16,8 +16,7 @@ void ApplicationInitialize(void) {
     window = CreateWindow(PROJECT_NAME);
 
     // for development
-    CreateShape(shapeList, 4, 50, Coord { 100, 200 }, rad(45), 0.1f, 0, 0);
-    CreateShape(shapeList, 4, 50, Coord { 900, 200 }, rad(45), -0.3f, 0, 0);
+    CreateShape(shapeList, 4, 50, Coord { 0, 200 }, rad(45), 0.1f, 0, -0.01f);
     CreateLine(lineList, Coord { 200, 200}, Coord { 600, 600}, 0, 0);
 }
 
@@ -28,6 +27,11 @@ void ApplicationQuit(void) {
 //
 
 void ApplicationUpdate(int deltatime) {
+    // Atualizando informações de sistema
+
+    // Atualizando câmera
+    camera->UpdateCameraPosition(mouse);
+
     // Atualizando todas as formas
     for (auto shape : shapeList) {
         shape->Update(deltatime);
@@ -57,6 +61,7 @@ void ApplicationUpdate(int deltatime) {
 
                 // Operações físicas
                 BodyElasticCollision(lineList[i]->velX, lineList[i]->velY, lineList[j]->velX, lineList[j]->velY);
+                ApplyTorqueByCollision(lineList[i]->velAng, lineList[j]->velAng, lineList[i]->coord.x, lineList[i]->coord.y, lineList[j]->coord.x, lineList[j]->coord.y, lineList[i]->length / 2, lineList[j]->length / 2);
 
                 // Visualização
                 lineList[i]->color = RGBA_GREEN;
@@ -83,6 +88,7 @@ void ApplicationUpdate(int deltatime) {
 
                 // Operações físicas
                 BodyElasticCollision(shapeList[i]->VelX, shapeList[i]->VelY, shapeList[j]->VelX, shapeList[j]->VelY);
+                ApplyTorqueByCollision(shapeList[i]->VelAng, shapeList[j]->VelAng, shapeList[i]->coord.x, shapeList[i]->coord.y, shapeList[j]->coord.x, shapeList[j]->coord.y, shapeList[i]->Size, shapeList[j]->Size);
 
                 // Visualzação
                 shapeList[i]->color = RGBA_GREEN;
@@ -105,6 +111,7 @@ void ApplicationUpdate(int deltatime) {
                 
                 // Operações físicas
                 BodyElasticCollision(shapeList[i]->VelX, shapeList[i]->VelY, lineList[j]->velX, lineList[j]->velY);
+                ApplyTorqueByCollision(shapeList[i]->VelAng, lineList[j]->velAng, shapeList[i]->coord.x, shapeList[i]->coord.y, lineList[j]->coord.x, lineList[j]->coord.y, shapeList[i]->Size, lineList[j]->length / 2);
 
                 // Visualização
                 shapeList[i]->color = RGBA_GREEN;
@@ -112,6 +119,15 @@ void ApplicationUpdate(int deltatime) {
 
             }
         }
+    }
+
+    // Colorindo linhas/formas selecionadas
+    if (lineSelected != nullptr) {
+        lineSelected->color = RGBA_WHITE;
+    }
+
+    if (shapeSelected != nullptr) {
+        shapeSelected->color = RGBA_WHITE;
     }
 
 }
@@ -124,12 +140,12 @@ void ApplicationRender(int deltatime) {
 
     // Renderizando todas as formas
     for (auto shape : shapeList) {
-        shape->Render(window);
+        shape->Render(window, camera);
     }
 
     // Renderizando todas as linhas
     for (auto line : lineList) {
-        line->Render(window);
+        line->Render(window, camera);
     }
 
     // Renderiza os gráficos

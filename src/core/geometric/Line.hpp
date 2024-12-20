@@ -10,12 +10,14 @@
 #include "core/geometric/basic.hpp"
 #include "core/geometric/RGBAColor.hpp"
 
+#include "utils/camera.hpp"
+
 class Line {
     public:
         // length = [px]; angle = [rad]
         double length, angle;
 
-        double velX, velY; // center of line
+        double velX, velY, velAng; // center of line
         Coord coord; // coordenadas
 
         RGBA color; // color of line
@@ -23,12 +25,11 @@ class Line {
         Line(Coord coord, double velX, double velY, double length, double angle, RGBA color);
 
         void Update(int deltatime);
-        void Render(std::shared_ptr<Window> window);
-
+        void Render(std::shared_ptr<Window> window, std::shared_ptr<Camera> camera);
 
         // utilities
 
-        static std::vector<Coord> FindLineLimits(std::shared_ptr<Line> line); // retorna os pontos limite de uma semireta
+        static std::vector<Coord> FindLineLimits(double x, double y, double angle, double length); // retorna os pontos limite de uma semireta
         static Coord* FindLineIntersection(std::shared_ptr<Line> origin, std::shared_ptr<Line> target); // encontra a interseção entre duas semiretas
 
         static std::vector<double> GetLineLawCoeficients(std::shared_ptr<Line> line); // obtém os coeficientes da lei da reta

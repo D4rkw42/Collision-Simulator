@@ -44,7 +44,10 @@ add_executable(
     src/core/geometric/Shape.cpp
     src/core/geometric/colliders.cpp
     
-    src/core/physics/physics.cpp)
+    src/core/physics/physics.cpp
+    
+    src/utils/camera.cpp
+    src/utils/mouse.cpp)
 
 # linking external libraries
 
