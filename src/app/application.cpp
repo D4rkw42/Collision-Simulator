@@ -32,6 +32,22 @@ void ApplicationUpdate(int deltatime) {
     // Atualizando câmera
     camera->UpdateCameraPosition(mouse);
 
+    // Atualizando velocidade do mouse
+    static int lastMouseX = mouse.x;
+    static int lastMouseY = mouse.y;
+
+    mouse.velX = (mouse.x - lastMouseX) / deltatime;
+    mouse.velY = (mouse.y - lastMouseY) / deltatime;
+
+    lastMouseX = mouse.x;
+    lastMouseY = mouse.y;
+
+    // Obtendo dados importantes
+
+    // Posição absoluta do mouse na tela
+    double absoluteMouseX, absoluteMouseY;
+    camera->GetAbsolutePosition(window, mouse.x, mouse.y, absoluteMouseX, absoluteMouseY);
+
     // Atualizando todas as formas
     for (auto shape : shapeList) {
         shape->Update(deltatime);
@@ -40,6 +56,31 @@ void ApplicationUpdate(int deltatime) {
     // atualizando todas as linhas
     for (auto line : lineList) {
         line->Update(deltatime);
+    }
+
+    // Movendo linhas e peças selecionadas
+    if (mouse.right.hold && isElementSelected) {
+
+        if (lineSelected != nullptr) {
+            if (distance(lineSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= lineSelected->length / 2) {
+                lineSelected->coord.x = absoluteMouseX;
+                lineSelected->coord.y = absoluteMouseY;
+                
+                // Compensação de velocidade
+                lineSelected->velX = mouse.velX * 0.5f;
+                lineSelected->velY = mouse.velY * 0.5f;
+            }
+        } else if (shapeSelected != nullptr) {
+            if (distance(shapeSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= shapeSelected->Size) {
+                shapeSelected->coord.x = absoluteMouseX;
+                shapeSelected->coord.y = absoluteMouseY;
+
+                // Compensação de velocidade
+                shapeSelected->VelX = mouse.velX * 0.5f;
+                shapeSelected->VelY = mouse.velY * 0.5f;
+            }
+        }
+
     }
 
     // Verificação de colisão

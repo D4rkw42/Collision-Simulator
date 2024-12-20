@@ -13,6 +13,7 @@ struct MouseInfo {
 // definições de mouse
 struct Mouse {
     int x, y; // posição do mouse em tempo real
+    int velX, velY; // velocidade instantânea do mouse em tempo real
     
     MouseInfo right;
     MouseInfo left;

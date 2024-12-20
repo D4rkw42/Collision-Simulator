@@ -17,3 +17,5 @@ inline LineList lineList;
 // Peças selecionadas
 inline std::shared_ptr<Line> lineSelected = nullptr;
 inline std::shared_ptr<Shape> shapeSelected = nullptr;
+
+inline bool isElementSelected = false; // se algum elemento está selecionado

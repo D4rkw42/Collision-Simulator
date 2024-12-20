@@ -41,12 +41,13 @@ void EventMouseClick(SDL_Event event) {
     // App
 
     // Buscando novas peças para serem selecionadas
-    if (event.type == SDL_MOUSEBUTTONUP) {
+    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT) {
         for (auto line : lineList) {
             if (distance(line->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= line->length / 2) {
                 lineSelected = line;
                 shapeSelected = nullptr;
 
+                isElementSelected = true;
                 break;
             }
         }
@@ -57,6 +58,7 @@ void EventMouseClick(SDL_Event event) {
                 shapeSelected = shape;
                 lineSelected = nullptr;
 
+                isElementSelected = true;
                 break;
             }
         }
@@ -83,6 +85,8 @@ void EventKeyUp(SDL_Event event) {
     if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
         lineSelected = nullptr;
         shapeSelected = nullptr;
+
+        isElementSelected = false;
     }
 }
 
