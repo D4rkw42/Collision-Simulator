@@ -6,6 +6,7 @@
 
 Shape::Shape(int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color) {
     if (vertex < 3) {
+        std::cout << "Can't create a shape with less 3 vertices." << "\n";
         throw new std::exception();
     }
 
@@ -28,7 +29,7 @@ void Shape::Update(int deltatime) {
     this->coord.x += this->VelX;
     this->coord.y += this->VelY;
 
-    //this->Angle += this->VelAng;
+    this->Angle += this->VelAng;
 
     if (this->Angle > rad(360)) {
         this->Angle -= rad(360);
@@ -80,7 +81,7 @@ LineList Shape::GetShapeLines(void) {
         }
 
         // Criando linhas
-        auto line = CreateLine(vertices[k], vertices[l], 0, 0, this->color);
+        auto line = CreateLine(vertices[k], vertices[l], 0, 0, 0, this->color);
         shapeLines.push_back(line);
     }
 

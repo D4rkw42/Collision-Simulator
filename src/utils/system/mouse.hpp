@@ -18,3 +18,13 @@ struct Mouse {
     MouseInfo right;
     MouseInfo left;
 };
+
+// utiliyu
+
+inline Mouse CreateMouseInput(void) {
+    return Mouse {
+        0, 0, 0, 0,
+        MouseInfo { false, 0, 0 },
+        MouseInfo { false, 0, 0 }
+    };
+}

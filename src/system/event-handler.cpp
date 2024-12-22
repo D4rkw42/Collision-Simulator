@@ -6,10 +6,14 @@
 
 #include <iostream>
 
+#include <effolkronium/random.hpp>
+
 #include "global.hpp"
 #include "app/global.hpp"
 
 #include "core/geometric/basic.hpp"
+
+using random = effolkronium::random_static;
 
 // eventos separador por tipo
 
@@ -76,6 +80,54 @@ void EventMouseClick(SDL_Event event) {
             }
         }
     }
+
+    // Fazendo a invocação de peças e elementos aleatórios
+    if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT && GetKeyState(keyList, "LEFT_SHIFT").hold == true) {
+        bool objectFound = false;
+
+        // deselecionando elementos por segurança e funcionalidade
+        lineSelected = nullptr;
+        shapeSelected = nullptr;
+
+        // deletando objetos caso sejam encontrados
+
+        for (int i = 0; i < lineList.size(); ++i) {
+            if (distance(lineList[i]->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= lineList[i]->length / 2) {
+                lineList.erase(lineList.begin() + i);
+                objectFound = true;
+                break;
+            }
+        }
+
+        if (!objectFound) {
+            for (int i = 0; i < shapeList.size(); ++i) {
+                if (distance(shapeList[i]->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= shapeList[i]->Size) {
+                    shapeList.erase(shapeList.begin() + i);
+                    objectFound = true;
+                    break;
+                }
+            }
+        }
+
+        // cria um novo elemento
+        const int numberOfVertices = random::get<int>(1, 12);
+        
+        const double invokedElementVelX = random::get<double>(-0.6f, 0.6f);
+        const double invokedElementVelY = random::get<double>(-0.6f, 0.6f);
+
+        const double invokedElementAngle = random::get<double>(rad(0), rad(360));
+        const double invokedElementAngleVel = random::get<double>(-0.01f, 0.01f);
+
+        const double invokedElementSize = random::get<double>(20, 130);
+
+        if (!objectFound) {
+            if (numberOfVertices == 1 || numberOfVertices == 2) {
+                CreateLineToList(lineList, Coord { mouseAbsoluteX, mouseAbsoluteY }, invokedElementVelX, invokedElementVelY, invokedElementAngleVel, invokedElementSize * 2, invokedElementAngle);
+            } else {
+                CreateShapeToList(shapeList, numberOfVertices, invokedElementSize, Coord { mouseAbsoluteX, mouseAbsoluteY }, invokedElementAngle, invokedElementVelX, invokedElementVelY, invokedElementAngleVel);
+            }
+        }
+    }
 }
 
 void EventMouseMove(SDL_Event event) {
@@ -94,6 +146,15 @@ void EventMouseScrolling(SDL_Event event) {
 }
 
 void EventKeyUp(SDL_Event event) {
+    // Atualizando o estado de todas as teclas
+    std::shared_ptr<Key> keyTarget = GetKey(keyList, event.key.keysym.scancode);
+
+    if (keyTarget != nullptr) {
+        keyTarget->state.clickDown = false;
+        keyTarget->state.clickUp = true;
+        keyTarget->state.hold = false;
+    }
+
     // Deselecionando formas/linhas
     if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
         lineSelected = nullptr;
@@ -104,7 +165,14 @@ void EventKeyUp(SDL_Event event) {
 }
 
 void EventKeyDown(SDL_Event event) {
+    // Atualizando o estado de todas as teclas
+    std::shared_ptr<Key> keyTarget = GetKey(keyList, event.key.keysym.scancode);
 
+    if (keyTarget != nullptr) {
+        keyTarget->state.clickDown = true;
+        keyTarget->state.clickUp = false;
+        keyTarget->state.hold = true;
+    }
 }
 
 // gerenciar todos os eventos

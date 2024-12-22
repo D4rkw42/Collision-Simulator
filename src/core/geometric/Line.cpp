@@ -10,11 +10,12 @@
 
 using random = effolkronium::random_static;
 
-Line::Line(Coord coord, double velX, double velY, double length, double angle, RGBA color) {
+Line::Line(Coord coord, double velX, double velY, double velAng, double length, double angle, RGBA color) {
     this->coord = coord;
 
     this->velX = velX;
     this->velY = velY;
+    this->velAng = velAng;
 
     this->length = length;
     this->angle = angle;
@@ -28,7 +29,7 @@ void Line::Update(int deltatime) {
     this->coord.x += this->velX;
     this->coord.y += this->velY;
 
-    //this->angle += this->velAng;
+    this->angle += this->velAng;
 
     if (this->angle > rad(360)) {
         this->angle -= rad(360);
@@ -81,7 +82,7 @@ std::vector<Coord> Line::FindLineLimits(double x, double y, double angle, double
 }
 
 // Encontra a interseção entre duas semiretas
-Coord* Line::FindLineIntersection(std::shared_ptr<Line> origin, std::shared_ptr<Line> target) {
+Coord Line::FindLineIntersection(std::shared_ptr<Line> origin, std::shared_ptr<Line> target) {
     auto OriginPoints = FindLineLimits(origin->coord.x, origin->coord.y, origin->angle, origin->length);
     auto TargetPoints = FindLineLimits(target->coord.x, target->coord.y, target->angle, target->length);
 
@@ -106,7 +107,7 @@ Coord* Line::FindLineIntersection(std::shared_ptr<Line> origin, std::shared_ptr<
     x = dB / dA;
     y = aCoefOrigin * x + bCoefOrigin;
 
-    return new Coord { x, y };
+    return Coord { x, y };
 }
 
 std::vector<double> Line::GetLineLawCoeficients(std::shared_ptr<Line> line) {
@@ -141,7 +142,7 @@ bool Line::LineCollision(std::shared_ptr<Line> origin, std::shared_ptr<Line> tar
     // Colisões especiais
 
     // Semiretas iguais totalmente sobrepostas
-    if (isnan(Intersection->x) && isnan(Intersection->y)) {
+    if (isnan(Intersection.x) && isnan(Intersection.y)) {
         return true;
     }
 
@@ -156,8 +157,8 @@ bool Line::LineCollision(std::shared_ptr<Line> origin, std::shared_ptr<Line> tar
     auto OriginPoints = FindLineLimits(origin->coord.x, origin->coord.y, origin->angle, origin->length);
     auto TargetPoints = FindLineLimits(target->coord.x, target->coord.y, target->angle, target->length);
 
-    double x = Intersection->x;
-    double y = Intersection->y;
+    double x = Intersection.x;
+    double y = Intersection.y;
 
     // Caso o ponto de interseção estiver dentro dos limites de uma das linhas, as semiretas se tocam
     return ( // para semireta origin

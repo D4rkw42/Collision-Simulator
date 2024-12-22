@@ -47,8 +47,10 @@ add_executable(
     
     src/core/physics/physics.cpp
     
-    src/utils/world/camera.cpp
-    src/utils/world/mouse.cpp)
+    src/utils/system/keyboard.cpp
+    src/utils/system/mouse.cpp
+
+    src/utils/world/camera.cpp)
 
 # linking external libraries
 

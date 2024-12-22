@@ -6,12 +6,12 @@
 
 #include "config/SDL2/graphics/Window.hpp"
 
-#include "utils/world/mouse.hpp"
+#include "utils/system/keyboard.hpp"
+#include "utils/system/mouse.hpp"
 
 inline std::shared_ptr<Window> window;
 
-inline Mouse mouse = {
-    0, 0, 0, 0,
-    MouseInfo {false, 0, 0}, // right
-    MouseInfo {false, 0, 0} // left
-};
+// definições para input
+
+inline KeyList keyList;
+inline Mouse mouse = CreateMouseInput();

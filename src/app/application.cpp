@@ -17,9 +17,8 @@
 void ApplicationInitialize(void) {
     window = CreateWindow(PROJECT_NAME);
 
-    // for development
-    CreateShape(shapeList, 4, 50, Coord { 0, 200 }, rad(45), 0.1f, 0, -0.01f);
-    CreateLine(lineList, Coord { 200, 200}, Coord { 600, 600}, 0, 0);
+    // Registrando keys
+    RegisterNewKey(keyList, SDL_SCANCODE_LSHIFT, "LEFT_SHIFT");
 }
 
 void ApplicationQuit(void) {
@@ -61,19 +60,21 @@ void ApplicationUpdate(int deltatime) {
     double absoluteMouseX, absoluteMouseY;
     camera->GetAbsolutePosition(window, mouse.x, mouse.y, absoluteMouseX, absoluteMouseY);
 
+    // Reset de cor
+    for (auto shape : shapeList) {
+        shape->color = RGBA_RED;
+    }
+
+    // Reset de cor
+    for (auto line : lineList) {
+        line->color = RGBA_RED;
+    }
+
     // Verificação de colisão
 
     // Linha a linha
     for (int i = 0; i < lineList.size(); ++i) {
-        for (int j = 0; j < lineList.size(); ++j) {
-            if (j < i || j == i) {
-                continue; // colisão já detectada ou colisão na mesma entidade
-            }
-
-            // visualização
-            lineList[i]->color = RGBA_RED;
-            lineList[j]->color = RGBA_RED;
-
+        for (int j = i + 1; j < lineList.size(); ++j) {
             if (LineToLineCollision(lineList[i], lineList[j])) {
 
                 // Colisão detectada
@@ -92,15 +93,7 @@ void ApplicationUpdate(int deltatime) {
 
     // Forma a forma
     for (int i = 0; i < shapeList.size(); ++i) {
-        for (int j = 0; j < shapeList.size(); ++j) {
-            if (j < i || j == i) {
-                continue; // colisão já detectada ou colisão entre a mesma entidade
-            }
-
-            // Visualização
-            shapeList[i]->color = RGBA_RED;
-            shapeList[j]->color = RGBA_RED;
-
+        for (int j = i + 1; j < shapeList.size(); ++j) {
             if (ShapeToShapeCollision(shapeList[i], shapeList[j])) {
 
                 // Colisão detectada
@@ -120,10 +113,6 @@ void ApplicationUpdate(int deltatime) {
     // Forma a linha
     for (int i = 0; i < shapeList.size(); ++i) {
         for (int j = 0; j < lineList.size(); ++j) {
-            // Visualização
-            shapeList[i]->color = RGBA_RED;
-            lineList[j]->color = RGBA_RED;
-
             if (ShapeToLineCollision(shapeList[i], lineList[j])) {
 
                 // Colisão detectada
@@ -140,15 +129,6 @@ void ApplicationUpdate(int deltatime) {
         }
     }
 
-    // Colorindo linhas/formas selecionadas
-    if (lineSelected != nullptr) {
-        lineSelected->color = RGBA_WHITE;
-    }
-
-    if (shapeSelected != nullptr) {
-        shapeSelected->color = RGBA_WHITE;
-    }
-
     // Atualizando todas as formas
     for (auto shape : shapeList) {
         shape->Update(deltatime);
@@ -157,6 +137,15 @@ void ApplicationUpdate(int deltatime) {
     // atualizando todas as linhas
     for (auto line : lineList) {
         line->Update(deltatime);
+    }
+
+    // Colorindo linhas/formas selecionadas
+    if (lineSelected != nullptr) {
+        lineSelected->color = RGBA_WHITE;
+    }
+
+    if (shapeSelected != nullptr) {
+        shapeSelected->color = RGBA_WHITE;
     }
 
     // Atualiza a velocidade dos objetos selecionados com base no movimento do mouse (grabbing)

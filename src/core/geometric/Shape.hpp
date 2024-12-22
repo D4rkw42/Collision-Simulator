@@ -41,7 +41,7 @@ inline std::shared_ptr<Shape> CreateShape(int vertex, int size, Coord coord, dou
 }
 
 // Criação dinâmica para listas
-inline void CreateShape(ShapeList& list, int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color = RGBA_RED) {
+inline void CreateShapeToList(ShapeList& list, int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color = RGBA_RED) {
     auto shape = CreateShape(vertex, size, coord, angle, velX, velY, velAng, color);
     list.push_back(shape);
 }
