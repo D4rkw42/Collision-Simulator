@@ -46,37 +46,32 @@ void EventMouseClick(SDL_Event event) {
 
     // Buscando novas peças para serem selecionadas
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT) {
+        for (auto line : lineList) {
+            if (distance(line->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= line->length / 2) {
+                lineSelected = line;
+                shapeSelected = nullptr;
 
-        if (lineSelected == nullptr) {
-            for (auto line : lineList) {
-                if (distance(line->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= line->length / 2) {
-                    lineSelected = line;
-                    shapeSelected = nullptr;
+                // Eliminando velocidade ao ser selecionado
+                lineSelected->velX = 0;
+                lineSelected->velY = 0;
 
-                    // Eliminando velocidade ao ser selecionado
-                    lineSelected->velX = 0;
-                    lineSelected->velY = 0;
-
-                    isElementSelected = true;
-                    break;
-                }
+                isElementSelected = true;
+                break;
             }
         }
 
         // Seleção de forma terá prioridade
-        if (shapeSelected == nullptr) {
-            for (auto shape : shapeList) {
-                if (distance(shape->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= shape->Size) {
-                    shapeSelected = shape;
-                    lineSelected = nullptr;
+        for (auto shape : shapeList) {
+            if (distance(shape->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= shape->Size) {
+                shapeSelected = shape;
+                lineSelected = nullptr;
 
-                    // Eliminando velocidade ao ser selecionado
-                    shapeSelected->VelX = 0;
-                    shapeSelected->VelY = 0;
+                // Eliminando velocidade ao ser selecionado
+                shapeSelected->VelX = 0;
+                shapeSelected->VelY = 0;
 
-                    isElementSelected = true;
-                    break;
-                }
+                isElementSelected = true;
+                break;
             }
         }
     }

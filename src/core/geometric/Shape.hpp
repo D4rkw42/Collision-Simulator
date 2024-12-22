@@ -16,10 +16,12 @@
 class Shape {
     public:
         Coord coord;
-        double VelX, VelY;
+        double VelX, VelY, accX, accY;
         double Angle, VelAng;
 
         int Size, Vertex; // tamanho/número de vértices
+
+        double isColliding;
 
         RGBA color;
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <chrono>
 #include <future>
+#include <cmath>
 
 #include "system/global.hpp"
 #include "config/config.hpp"
@@ -78,14 +79,25 @@ void ApplicationUpdate(int deltatime) {
             if (LineToLineCollision(lineList[i], lineList[j])) {
 
                 // Colisão detectada
+                lineList[i]->isColliding = true;
+                lineList[j]->isColliding = true;
 
                 // Operações físicas
-                BodyElasticCollision(lineList[i]->velX, lineList[i]->velY, lineList[j]->velX, lineList[j]->velY);
+                BodyElasticCollision(lineList[i]->velX, lineList[i]->velY, lineList[j]->velX, lineList[j]->velY, lineList[i]->accX, lineList[i]->accY, lineList[j]->accX, lineList[j]->accY);
                 ApplyTorqueByCollision(lineList[i]->velAng, lineList[j]->velAng, lineList[i]->coord.x, lineList[i]->coord.y, lineList[j]->coord.x, lineList[j]->coord.y, lineList[i]->length / 2, lineList[j]->length / 2);
 
                 // Visualização
                 lineList[i]->color = RGBA_GREEN;
                 lineList[j]->color = RGBA_GREEN;
+
+                // Prevenção para formas geométricas que se invadem
+                double angle = angleBetweenPoints(lineList[i]->coord, lineList[j]->coord);
+
+                lineList[i]->coord.x -= 1.5f * cos(angle);
+                lineList[i]->coord.y -= 1.5f * sin(angle);
+
+                lineList[j]->coord.x += 1.5f * cos(angle);
+                lineList[j]->coord.y += 1.5f * sin(angle);
 
             }
         }
@@ -97,15 +109,25 @@ void ApplicationUpdate(int deltatime) {
             if (ShapeToShapeCollision(shapeList[i], shapeList[j])) {
 
                 // Colisão detectada
+                shapeList[i]->isColliding = true;
+                shapeList[j]->isColliding = true;
 
                 // Operações físicas
-                BodyElasticCollision(shapeList[i]->VelX, shapeList[i]->VelY, shapeList[j]->VelX, shapeList[j]->VelY);
+                BodyElasticCollision(shapeList[i]->VelX, shapeList[i]->VelY, shapeList[j]->VelX, shapeList[j]->VelY, shapeList[i]->accX, shapeList[i]->accY, shapeList[j]->accX, shapeList[j]->accY);
                 ApplyTorqueByCollision(shapeList[i]->VelAng, shapeList[j]->VelAng, shapeList[i]->coord.x, shapeList[i]->coord.y, shapeList[j]->coord.x, shapeList[j]->coord.y, shapeList[i]->Size, shapeList[j]->Size);
 
                 // Visualzação
                 shapeList[i]->color = RGBA_GREEN;
                 shapeList[j]->color = RGBA_GREEN;
 
+                // Prevenção para formas geométricas que se invadem
+                double angle = angleBetweenPoints(shapeList[i]->coord, shapeList[j]->coord);
+
+                shapeList[i]->coord.x -= 1.5f * cos(angle);
+                shapeList[i]->coord.y -= 1.5f * sin(angle);
+
+                shapeList[j]->coord.x += 1.5f * cos(angle);
+                shapeList[j]->coord.y += 1.5f * sin(angle);
             }
         }
     }
@@ -116,14 +138,25 @@ void ApplicationUpdate(int deltatime) {
             if (ShapeToLineCollision(shapeList[i], lineList[j])) {
 
                 // Colisão detectada
+                shapeList[i]->isColliding = true;
+                lineList[j]->isColliding = true;
                 
                 // Operações físicas
-                BodyElasticCollision(shapeList[i]->VelX, shapeList[i]->VelY, lineList[j]->velX, lineList[j]->velY);
+                BodyElasticCollision(shapeList[i]->VelX, shapeList[i]->VelY, lineList[j]->velX, lineList[j]->velY, shapeList[i]->accX, shapeList[i]->accY, lineList[j]->accX, lineList[j]->accY);
                 ApplyTorqueByCollision(shapeList[i]->VelAng, lineList[j]->velAng, shapeList[i]->coord.x, shapeList[i]->coord.y, lineList[j]->coord.x, lineList[j]->coord.y, shapeList[i]->Size, lineList[j]->length / 2);
 
                 // Visualização
                 shapeList[i]->color = RGBA_GREEN;
                 lineList[j]->color = RGBA_GREEN;
+
+                // Prevenção para formas geométricas que se invadem
+                double angle = angleBetweenPoints(shapeList[i]->coord, lineList[j]->coord);
+
+                shapeList[i]->coord.x -= 1.5f * cos(angle);
+                shapeList[i]->coord.y -= 1.5f * sin(angle);
+
+                lineList[j]->coord.x += 1.5f * cos(angle);
+                lineList[j]->coord.y += 1.5f * sin(angle);
 
             }
         }
@@ -131,11 +164,23 @@ void ApplicationUpdate(int deltatime) {
 
     // Atualizando todas as formas
     for (auto shape : shapeList) {
+        // reset de aceleração
+        if (!shape->isColliding) {
+            shape->accX = 0;
+            shape->accY = 0;
+        }
+
         shape->Update(deltatime);
     }
 
     // atualizando todas as linhas
     for (auto line : lineList) {
+        // reset de aceleração
+        if (!line->isColliding) {
+            line->accX = 0;
+            line->accY = 0;
+        }
+
         line->Update(deltatime);
     }
 
@@ -152,10 +197,14 @@ void ApplicationUpdate(int deltatime) {
 
     const double OBJECT_SELECTED_VELOCITY_COEFFICIENT = 1.15f;
     const double OBJECT_SELECTED_MAX_VELOCITY = 3.f;
-    const double OBJECT_SELECTED_MIN_VELOCITY = 0.8f;
+    const double OBJECT_SELECTED_MIN_VELOCITY = 1.f;
 
-    double objectSelectedVelX = mouse.velX * OBJECT_SELECTED_VELOCITY_COEFFICIENT;
-    double objectSelectedVelY = mouse.velY * OBJECT_SELECTED_VELOCITY_COEFFICIENT;
+    double mouseVelAngle = atan2(mouse.velY, mouse.velX);
+
+    double objectSelectedVelX = mouse.velX * OBJECT_SELECTED_VELOCITY_COEFFICIENT * cos(mouseVelAngle);
+    double objectSelectedVelY = mouse.velY * OBJECT_SELECTED_VELOCITY_COEFFICIENT * sin(mouseVelAngle);
+
+    
 
     if (mouse.velX != 0) {
         if (abs(objectSelectedVelX) < OBJECT_SELECTED_MIN_VELOCITY) {
@@ -163,6 +212,8 @@ void ApplicationUpdate(int deltatime) {
         } else if (abs(objectSelectedVelX) > OBJECT_SELECTED_MAX_VELOCITY) {
             objectSelectedVelX = objectSelectedVelX > 0 ? OBJECT_SELECTED_MAX_VELOCITY : -OBJECT_SELECTED_MAX_VELOCITY;
         }
+
+        objectSelectedVelX *= cos(mouseVelAngle);
     }
 
     if (mouse.velY != 0) {
@@ -171,6 +222,8 @@ void ApplicationUpdate(int deltatime) {
         } else if (abs(objectSelectedVelY) > OBJECT_SELECTED_MAX_VELOCITY) {
             objectSelectedVelY = objectSelectedVelY > 0 ? OBJECT_SELECTED_MAX_VELOCITY : -OBJECT_SELECTED_MAX_VELOCITY;
         }
+
+        objectSelectedVelY *= sin(mouseVelAngle);
     }
 
     if (mouse.right.hold && isElementSelected) { 

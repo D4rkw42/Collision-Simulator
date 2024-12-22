@@ -14,20 +14,34 @@ Shape::Shape(int vertex, int size, Coord coord, double angle, double velX, doubl
     this->Size = size;
 
     this->coord = coord;
+
     this->VelY = velY;
     this->VelX = velX;
+
+    this->accX = 0;
+    this->accY = 0;
 
     this->Angle = angle;
     this->VelAng = velAng;
 
     this->color = color;
+
+    this->isColliding = false;
 }
 
 //
 
 void Shape::Update(int deltatime) {
+    // Primeira atualização de velocidade
+    this->VelX += this->accX * 0.5f;
+    this->VelY += this->accY * 0.5f;
+
     this->coord.x += this->VelX;
     this->coord.y += this->VelY;
+
+    // Segunda atualização de velocidade
+    this->VelX += this->accX * 0.5f;
+    this->VelY += this->accY * 0.5f;
 
     this->Angle += this->VelAng;
 
@@ -38,6 +52,8 @@ void Shape::Update(int deltatime) {
     if (this->Angle < 0) {
         this->Angle += rad(360);
     }
+
+    this->isColliding = false;
 }
 
 void Shape::Render(std::shared_ptr<Window> window, std::shared_ptr<Camera> camera) {

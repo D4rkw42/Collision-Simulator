@@ -27,3 +27,10 @@ inline double distance(Coord from, Coord to) {
 inline double angleBetweenPoints(Coord point1, Coord point2) {
     return atan2(point2.y - point1.y, point2.x - point1.x);
 }
+
+inline Coord FindMediumPoint(Coord point1, Coord point2) {
+    double x = (point1.x + point2.x) / 2;
+    double y = (point1.y + point2.y) / 2;
+
+    return Coord { x, y };
+}

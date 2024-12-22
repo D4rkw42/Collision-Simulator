@@ -15,10 +15,16 @@ Line::Line(Coord coord, double velX, double velY, double velAng, double length, 
 
     this->velX = velX;
     this->velY = velY;
+
+    this->accX = 0;
+    this->accY = 0;
+
     this->velAng = velAng;
 
     this->length = length;
     this->angle = angle;
+
+    this->isColliding = false;
 
     this->color = color;
 }
@@ -26,8 +32,16 @@ Line::Line(Coord coord, double velX, double velY, double velAng, double length, 
 //
 
 void Line::Update(int deltatime) {
+    // Primeira atualização de velocidade
+    this->velX += this->accX * 0.5f;
+    this->velY += this->accY * 0.5f;
+
     this->coord.x += this->velX;
     this->coord.y += this->velY;
+
+    // Segunda atualização de velocidade
+    this->velX += this->accX * 0.5f;
+    this->velY += this->accY * 0.5f;
 
     this->angle += this->velAng;
 
@@ -38,6 +52,8 @@ void Line::Update(int deltatime) {
     if (this->angle < 0) {
         this->angle += rad(360);
     }
+
+    this->isColliding = false;
 }
 
 void Line::Render(std::shared_ptr<Window> window, std::shared_ptr<Camera> camera) {

@@ -17,8 +17,10 @@ class Line {
         // length = [px]; angle = [rad]
         double length, angle;
 
-        double velX, velY, velAng; // center of line
+        double velX, velY, accX, accY, velAng; // center of line
         Coord coord; // coordenadas
+
+        double isColliding;
 
         RGBA color; // color of line
 
