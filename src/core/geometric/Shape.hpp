@@ -11,7 +11,7 @@
 #include "core/geometric/Line.hpp"
 #include "core/geometric/RGBAColor.hpp"
 
-#include "utils/camera.hpp"
+#include "utils/world/camera.hpp"
 
 class Shape {
     public:

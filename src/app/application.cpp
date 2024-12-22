@@ -1,13 +1,15 @@
 #include "application.hpp"
 
 #include <iostream>
+#include <chrono>
+#include <future>
 
-#include "global.hpp"
+#include "system/global.hpp"
 #include "config/config.hpp"
 
 #include "config/SDL2/graphics/Window.hpp"
 
-#include "app/app-global.hpp"
+#include "app/global.hpp"
 
 #include "core/geometric/colliders.hpp"
 #include "core/physics/physics.hpp"
@@ -36,8 +38,19 @@ void ApplicationUpdate(int deltatime) {
     static int lastMouseX = mouse.x;
     static int lastMouseY = mouse.y;
 
-    mouse.velX = (mouse.x - lastMouseX) / deltatime;
-    mouse.velY = (mouse.y - lastMouseY) / deltatime;
+    double instantMouseVelY = (mouse.y - lastMouseY) / deltatime;
+    double instantMouseVelX = (mouse.x - lastMouseX) / deltatime;
+
+    mouse.velX = (mouse.velX + instantMouseVelX) / 2;
+    mouse.velY = (mouse.velY + instantMouseVelY) / 2;
+
+    if (abs(mouse.velX) < pow(10, -10)) {
+        mouse.velX = 0;
+    }
+
+    if (abs(mouse.velY) < pow(10, -10)) {
+        mouse.velY = 0;
+    }
 
     lastMouseX = mouse.x;
     lastMouseY = mouse.y;
@@ -47,41 +60,6 @@ void ApplicationUpdate(int deltatime) {
     // Posição absoluta do mouse na tela
     double absoluteMouseX, absoluteMouseY;
     camera->GetAbsolutePosition(window, mouse.x, mouse.y, absoluteMouseX, absoluteMouseY);
-
-    // Atualizando todas as formas
-    for (auto shape : shapeList) {
-        shape->Update(deltatime);
-    }
-
-    // atualizando todas as linhas
-    for (auto line : lineList) {
-        line->Update(deltatime);
-    }
-
-    // Movendo linhas e peças selecionadas
-    if (mouse.right.hold && isElementSelected) {
-
-        if (lineSelected != nullptr) {
-            if (distance(lineSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= lineSelected->length / 2) {
-                lineSelected->coord.x = absoluteMouseX;
-                lineSelected->coord.y = absoluteMouseY;
-                
-                // Compensação de velocidade
-                lineSelected->velX = mouse.velX * 0.5f;
-                lineSelected->velY = mouse.velY * 0.5f;
-            }
-        } else if (shapeSelected != nullptr) {
-            if (distance(shapeSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= shapeSelected->Size) {
-                shapeSelected->coord.x = absoluteMouseX;
-                shapeSelected->coord.y = absoluteMouseY;
-
-                // Compensação de velocidade
-                shapeSelected->VelX = mouse.velX * 0.5f;
-                shapeSelected->VelY = mouse.velY * 0.5f;
-            }
-        }
-
-    }
 
     // Verificação de colisão
 
@@ -169,6 +147,61 @@ void ApplicationUpdate(int deltatime) {
 
     if (shapeSelected != nullptr) {
         shapeSelected->color = RGBA_WHITE;
+    }
+
+    // Atualizando todas as formas
+    for (auto shape : shapeList) {
+        shape->Update(deltatime);
+    }
+
+    // atualizando todas as linhas
+    for (auto line : lineList) {
+        line->Update(deltatime);
+    }
+
+    // Atualiza a velocidade dos objetos selecionados com base no movimento do mouse (grabbing)
+
+    const double OBJECT_SELECTED_VELOCITY_COEFFICIENT = 1.15f;
+    const double OBJECT_SELECTED_MAX_VELOCITY = 3.f;
+    const double OBJECT_SELECTED_MIN_VELOCITY = 0.8f;
+
+    double objectSelectedVelX = mouse.velX * OBJECT_SELECTED_VELOCITY_COEFFICIENT;
+    double objectSelectedVelY = mouse.velY * OBJECT_SELECTED_VELOCITY_COEFFICIENT;
+
+    if (mouse.velX != 0) {
+        if (abs(objectSelectedVelX) < OBJECT_SELECTED_MIN_VELOCITY) {
+            objectSelectedVelX = objectSelectedVelX > 0 ? OBJECT_SELECTED_MIN_VELOCITY : -OBJECT_SELECTED_MIN_VELOCITY;
+        } else if (abs(objectSelectedVelX) > OBJECT_SELECTED_MAX_VELOCITY) {
+            objectSelectedVelX = objectSelectedVelX > 0 ? OBJECT_SELECTED_MAX_VELOCITY : -OBJECT_SELECTED_MAX_VELOCITY;
+        }
+    }
+
+    if (mouse.velY != 0) {
+        if (abs(objectSelectedVelY) < OBJECT_SELECTED_MIN_VELOCITY) {
+            objectSelectedVelY = objectSelectedVelY > 0 ? OBJECT_SELECTED_MIN_VELOCITY : -OBJECT_SELECTED_MIN_VELOCITY;
+        } else if (abs(objectSelectedVelY) > OBJECT_SELECTED_MAX_VELOCITY) {
+            objectSelectedVelY = objectSelectedVelY > 0 ? OBJECT_SELECTED_MAX_VELOCITY : -OBJECT_SELECTED_MAX_VELOCITY;
+        }
+    }
+
+    if (mouse.right.hold && isElementSelected) { 
+        if (lineSelected != nullptr) {
+            // Mantém o elemento na mesma posição
+            lineSelected->coord.x = absoluteMouseX;
+            lineSelected->coord.y = absoluteMouseY;
+
+            // Atualização de velocidade
+            lineSelected->velX = objectSelectedVelX;
+            lineSelected->velY = objectSelectedVelY;
+        } else if (shapeSelected != nullptr) {
+            // Mantém o elemento na mesma posição
+            shapeSelected->coord.x = absoluteMouseX;
+            shapeSelected->coord.y = absoluteMouseY;
+
+            // Atualização de velocidade
+            shapeSelected->VelX = objectSelectedVelX;
+            shapeSelected->VelY = objectSelectedVelY;
+        }
     }
 
 }

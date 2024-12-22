@@ -7,7 +7,7 @@
 #include "config/config.hpp"
 
 #include "app/application.hpp"
-#include "app/event-handler.hpp"
+#include "system/event-handler.hpp"
 
 #define SDL_MAIN_HANDLED
 

@@ -5,7 +5,7 @@
 #include "core/geometric/Shape.hpp"
 #include "core/geometric/Line.hpp"
 
-#include "utils/camera.hpp"
+#include "utils/world/camera.hpp"
 
 // utilidades
 inline std::shared_ptr<Camera> camera = std::make_shared<Camera>(0, 0);

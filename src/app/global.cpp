@@ -1,3 +1,3 @@
 // Variáveis globais da aplicação
 
-#include "app-global.hpp"
+#include "global.hpp"

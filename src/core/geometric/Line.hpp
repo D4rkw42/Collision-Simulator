@@ -10,7 +10,7 @@
 #include "core/geometric/basic.hpp"
 #include "core/geometric/RGBAColor.hpp"
 
-#include "utils/camera.hpp"
+#include "utils/world/camera.hpp"
 
 class Line {
     public:

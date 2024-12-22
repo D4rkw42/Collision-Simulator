@@ -8,7 +8,7 @@
 
 #include "config/SDL2/graphics/Window.hpp"
 
-#include "utils/mouse.hpp"
+#include "utils/world/mouse.hpp"
 
 // definições
 const double MAX_ZOOM = 3.f; // zoom máximo permitido

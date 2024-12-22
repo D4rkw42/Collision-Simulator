@@ -32,13 +32,14 @@ add_executable(
     geometric-collisions-simulator
     
     src/main.cpp
-    src/global.cpp
-    
+
+    src/system/global.cpp
+    src/system/event-handler.cpp
+
     src/config/SDL2/config.cpp
     src/config/SDL2/graphics/Window.cpp
     
     src/app/application.cpp
-    src/app/event-handler.cpp
     
     src/core/geometric/Line.cpp
     src/core/geometric/Shape.cpp
@@ -46,8 +47,8 @@ add_executable(
     
     src/core/physics/physics.cpp
     
-    src/utils/camera.cpp
-    src/utils/mouse.cpp)
+    src/utils/world/camera.cpp
+    src/utils/world/mouse.cpp)
 
 # linking external libraries
 
