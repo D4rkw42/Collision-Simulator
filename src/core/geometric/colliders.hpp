@@ -7,6 +7,6 @@
 #include "core/geometric/Line.hpp"
 #include "core/geometric/Shape.hpp"
 
-bool LineToLineCollision(std::shared_ptr<Line> origin, std::shared_ptr<Line> target); // colisão linha a linha
-bool ShapeToShapeCollision(std::shared_ptr<Shape> origin, std::shared_ptr<Shape> target); // colisão forma a forma
-bool ShapeToLineCollision(std::shared_ptr<Shape> shape, std::shared_ptr<Line> line); // colisão forma a linha
+bool LineToLineCollision(const std::shared_ptr<Line>& origin, const std::shared_ptr<Line>& target); // colisão linha a linha
+bool ShapeToShapeCollision(const std::shared_ptr<Shape>& origin, const std::shared_ptr<Shape>& target); // colisão forma a forma
+bool ShapeToLineCollision(const std::shared_ptr<Shape>& shape, const std::shared_ptr<Line>& line); // colisão forma a linha

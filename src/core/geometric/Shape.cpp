@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-Shape::Shape(int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color) {
+Shape::Shape(int vertex, int size, const Coord& coord, double angle, double velX, double velY, double velAng, const RGBA& color) {
     if (vertex < 3) {
         std::cout << "Can't create a shape with less 3 vertices." << "\n";
         throw new std::exception();
@@ -25,6 +25,25 @@ Shape::Shape(int vertex, int size, Coord coord, double angle, double velX, doubl
     this->VelAng = velAng;
 
     this->color = color;
+
+    // criando linhas da forma
+    this->shapeLines = std::vector<RawLine>();
+    this->shapeLines.reserve(this->Vertex);
+
+    std::vector<Coord> vertices = GetShapeVertices();
+
+    // Encontrando todas as arestas
+    for (int i = 0; i < this->Vertex; ++i) {
+        int k = i;
+        int l = i + 1;
+
+        if (l == this->Vertex) {
+            l = 0;
+        }
+
+        // atualizando linhas
+        this->shapeLines.emplace_back(CreateRawLine(vertices[k], vertices[l]));
+    }
 
     this->isColliding = false;
 }
@@ -53,39 +72,19 @@ void Shape::Update(int deltatime) {
         this->Angle += rad(360);
     }
 
+    UpdateShapeLines();
+
     this->isColliding = false;
 }
 
-void Shape::Render(std::shared_ptr<Window> window, std::shared_ptr<Camera> camera) {
-    LineList shapeLines = GetShapeLines();
-
-    for (auto line : shapeLines) {
-        line->Render(window, camera);
+void Shape::Render(const std::shared_ptr<Window>& window, const std::shared_ptr<Camera>& camera) {
+    for (auto line : this->shapeLines) {
+        Line::RenderLine(window, camera, line.coord, line.length, line.angle, this->color);
     }
 }
 
-LineList Shape::GetShapeLines(void) {
-    LineList shapeLines;
-
-    // Encontrando todos os vértices
-    std::vector<Coord> vertices;
-    double angle = this->Angle;
-
-    double step = rad(360) / this->Vertex;
-
-    for (int i = 0; i < this->Vertex; ++i) {
-        double x = this->coord.x + this->Size * cos(angle);
-        double y = this->coord.y + this->Size * sin(angle);
-
-        vertices.push_back(Coord { x, y });
-
-        // Passando para o próximo ângulo
-        angle += step;
-
-        if (angle > rad(360)) {
-            angle -= rad(360);
-        }
-    }
+void Shape::UpdateShapeLines(void) {
+    std::vector<Coord> vertices = GetShapeVertices();
 
     // Encontrando todas as arestas
     for (int i = 0; i < this->Vertex; ++i) {
@@ -96,10 +95,36 @@ LineList Shape::GetShapeLines(void) {
             l = 0;
         }
 
-        // Criando linhas
-        auto line = CreateLine(vertices[k], vertices[l], 0, 0, 0, this->color);
-        shapeLines.push_back(line);
+        // atualizando linhas
+        RawLine::UpdatePosition(this->shapeLines[i], vertices[k], vertices[l]);
+    }
+}
+
+std::vector<RawLine> Shape::GetShapeLines(void) {
+    return this->shapeLines;
+}
+
+std::vector<Coord> Shape::GetShapeVertices(void) {
+    // Encontrando todos os vértices
+    std::vector<Coord> vertices(this->Vertex);
+
+    double angle = this->Angle;
+
+    double step = rad(360) / this->Vertex;
+
+    for (int i = 0; i < this->Vertex; ++i) {
+        double x = this->coord.x + this->Size * cos(angle);
+        double y = this->coord.y + this->Size * sin(angle);
+
+        vertices[i] = Coord { x, y };
+
+        // Passando para o próximo ângulo
+        angle += step;
+
+        if (angle > rad(360)) {
+            angle -= rad(360);
+        }
     }
 
-    return shapeLines;
+    return vertices;
 }

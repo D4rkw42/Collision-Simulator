@@ -10,8 +10,8 @@
 
 // config
 
-const unsigned short WINDOW_WIDTH = 800;
-const unsigned short WINDOW_HEIGHT = 600;
+constexpr short WINDOW_WIDTH = 800;
+constexpr short WINDOW_HEIGHT = 600;
 
 // definição geral de janela
 class Window {
@@ -20,7 +20,7 @@ class Window {
 
         bool windowCreateFailure;
         
-        Window(std::string name);
+        Window(const std::string& name);
         ~Window();
 
         void Render(void); // renderiza os gráficos
@@ -34,4 +34,4 @@ class Window {
 };
 
 // criação dinâmica de janelas
-std::shared_ptr<Window> CreateWindow(std::string name);
+std::shared_ptr<Window> CreateWindow(const std::string& name);

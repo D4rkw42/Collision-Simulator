@@ -10,7 +10,7 @@
 Camera::Camera(int x, int y) : x(x), y(y), zoom(ZOOM_INITIAL) {}
 
 // Calculando viewport
-void Camera::Viewport(std::shared_ptr<Window> window, ObjectInfo info, double& x, double& y, double& size) {
+void Camera::Viewport(const std::shared_ptr<Window>& window, const ObjectInfo& info, double& x, double& y, double& size) {
     double cam_x = this->x;
     double cam_y = this->y;
 
@@ -33,7 +33,7 @@ void Camera::Viewport(std::shared_ptr<Window> window, ObjectInfo info, double& x
 
 //
 
-void Camera::UpdateCameraPosition(Mouse mouse) {
+void Camera::UpdateCameraPosition(const Mouse& mouse) {
     static int last_cam_x = this->x;
     static int last_cam_y = this->y;
 
@@ -69,19 +69,19 @@ void Camera::ZoomOut(void) {
 
 // funções auxiliares
 
-// obtém o quanto do mundo a câmera está capturando (com acréscimo de 10%)
-void Camera::GetRenderDistance(std::shared_ptr<Window> window, double& dist_horiz, double& dist_vert) {
+// obtém o quanto do mundo a câmera está capturando
+void Camera::GetRenderDistance(const std::shared_ptr<Window>& window, double& dist_horiz, double& dist_vert) {
     int w_width, w_height;
 
     // obtendo dimensões da janela
     window->GetDimensions(w_width, w_height);
 
     // calculando distância observada (top-bottom, left-right)
-    dist_horiz = 1.3f * (w_width * (1.f / this->zoom));
-    dist_vert = 1.3f * (w_height * (1.f / this->zoom));
+    dist_horiz = w_width * (1.f / this->zoom) * 0.5f;
+    dist_vert = w_height * (1.f / this->zoom) * 0.5f;
 }
 
-void Camera::GetAbsolutePosition(std::shared_ptr<Window> window, double x, double y, double &absoluteX, double &absoluteY) {
+void Camera::GetAbsolutePosition(const std::shared_ptr<Window>& window, double x, double y, double &absoluteX, double &absoluteY) {
     int w_width, w_height;
     window->GetDimensions(w_width, w_height);
 

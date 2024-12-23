@@ -5,7 +5,7 @@
 #include "Window.hpp"
 
 // definição geral de janela
-Window::Window(std::string name) {
+Window::Window(const std::string& name) {
     SDL_Window* _window = SDL_CreateWindow(
                                     name.c_str(),
                                     SDL_WINDOWPOS_CENTERED,
@@ -46,6 +46,6 @@ void Window::GetDimensions(int& width, int& height) {
 
 //
 
-std::shared_ptr<Window> CreateWindow(std::string name) {
+std::shared_ptr<Window> CreateWindow(const std::string& name) {
     return std::make_shared<Window>(name);
 }

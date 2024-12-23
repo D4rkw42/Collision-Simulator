@@ -15,7 +15,9 @@
 
 class Shape {
     public:
+        std::vector<RawLine> shapeLines;
         Coord coord;
+
         double VelX, VelY, accX, accY;
         double Angle, VelAng;
 
@@ -25,25 +27,37 @@ class Shape {
 
         RGBA color;
 
-        Shape(int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color);
+        Shape(int vertex, int size, const Coord& coord, double angle, double velX, double velY, double velAng, const RGBA& color);
 
         void Update(int deltatime);
-        void Render(std::shared_ptr<Window> window, std::shared_ptr<Camera> camera);
+        void Render(const std::shared_ptr<Window>& window, const std::shared_ptr<Camera>& camera);
 
-        LineList GetShapeLines(void);
+        void UpdateShapeLines(void);
+
+        std::vector<RawLine> GetShapeLines(void);
+        std::vector<Coord> GetShapeVertices(void);
 
 };
 
 // Definições
-typedef std::vector<std::shared_ptr<Shape>> ShapeList;
+typedef std::array<std::shared_ptr<Shape>, 30> ShapeList;
 
 // Criação dinâmica de formas
-inline std::shared_ptr<Shape> CreateShape(int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color = RGBA_RED) {
+inline std::shared_ptr<Shape> CreateShape(int vertex, int size, const Coord& coord, double angle, double velX, double velY, double velAng, const RGBA& color = RGBA_RED) {
     return std::make_shared<Shape>(vertex, size, coord, angle, velX, velY, velAng, color);
 }
 
 // Criação dinâmica para listas
-inline void CreateShapeToList(ShapeList& list, int vertex, int size, Coord coord, double angle, double velX, double velY, double velAng, RGBA color = RGBA_RED) {
+inline bool CreateShapeToList(ShapeList& list, int vertex, int size, const Coord& coord, double angle, double velX, double velY, double velAng, const RGBA& color = RGBA_RED) {
     auto shape = CreateShape(vertex, size, coord, angle, velX, velY, velAng, color);
-    list.push_back(shape);
+
+    for (int i = 0; i < list.size(); ++i) {
+        if (list[i] == nullptr) {
+            list[i] = shape;
+            // retorna true se bem sucedido
+            return true;
+        }
+    }
+
+    return false;
 }

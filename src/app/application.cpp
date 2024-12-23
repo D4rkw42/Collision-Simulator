@@ -18,6 +18,10 @@
 void ApplicationInitialize(void) {
     window = CreateWindow(PROJECT_NAME);
 
+    // Inicializando variáveis
+    lineList.fill(nullptr);
+    shapeList.fill(nullptr);
+
     // Registrando keys
     RegisterNewKey(keyList, SDL_SCANCODE_LSHIFT, "LEFT_SHIFT");
 }
@@ -63,11 +67,19 @@ void ApplicationUpdate(int deltatime) {
 
     // Reset de cor
     for (auto shape : shapeList) {
+        if (shape == nullptr) {
+            continue;
+        }
+
         shape->color = RGBA_RED;
     }
 
     // Reset de cor
     for (auto line : lineList) {
+        if (line == nullptr) {
+            continue;
+        }
+
         line->color = RGBA_RED;
     }
 
@@ -75,7 +87,15 @@ void ApplicationUpdate(int deltatime) {
 
     // Linha a linha
     for (int i = 0; i < lineList.size(); ++i) {
+        if (lineList[i] == nullptr) {
+            continue;
+        }
+
         for (int j = i + 1; j < lineList.size(); ++j) {
+            if (lineList[j] == nullptr) {
+                continue;
+            }
+
             if (LineToLineCollision(lineList[i], lineList[j])) {
 
                 // Colisão detectada
@@ -105,7 +125,15 @@ void ApplicationUpdate(int deltatime) {
 
     // Forma a forma
     for (int i = 0; i < shapeList.size(); ++i) {
+        if (shapeList[i] == nullptr) {
+            continue;
+        }
+
         for (int j = i + 1; j < shapeList.size(); ++j) {
+            if (shapeList[j] == nullptr) {
+                continue;
+            }
+
             if (ShapeToShapeCollision(shapeList[i], shapeList[j])) {
 
                 // Colisão detectada
@@ -134,7 +162,15 @@ void ApplicationUpdate(int deltatime) {
 
     // Forma a linha
     for (int i = 0; i < shapeList.size(); ++i) {
+        if (shapeList[i] == nullptr) {
+            continue;
+        }
+
         for (int j = 0; j < lineList.size(); ++j) {
+            if (lineList[j] == nullptr) {
+                continue;
+            }
+
             if (ShapeToLineCollision(shapeList[i], lineList[j])) {
 
                 // Colisão detectada
@@ -164,6 +200,10 @@ void ApplicationUpdate(int deltatime) {
 
     // Atualizando todas as formas
     for (auto shape : shapeList) {
+        if (shape == nullptr) {
+            continue;
+        }
+
         // reset de aceleração
         if (!shape->isColliding) {
             shape->accX = 0;
@@ -175,6 +215,10 @@ void ApplicationUpdate(int deltatime) {
 
     // atualizando todas as linhas
     for (auto line : lineList) {
+        if (line == nullptr) {
+            continue;
+        }
+
         // reset de aceleração
         if (!line->isColliding) {
             line->accX = 0;
@@ -228,21 +272,25 @@ void ApplicationUpdate(int deltatime) {
 
     if (mouse.right.hold && isElementSelected) { 
         if (lineSelected != nullptr) {
-            // Mantém o elemento na mesma posição
-            lineSelected->coord.x = absoluteMouseX;
-            lineSelected->coord.y = absoluteMouseY;
+            if (distance(lineSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= (lineSelected->length / 2) * 1.3f) {
+                // Mantém o elemento na mesma posição
+                lineSelected->coord.x = absoluteMouseX;
+                lineSelected->coord.y = absoluteMouseY;
 
-            // Atualização de velocidade
-            lineSelected->velX = objectSelectedVelX;
-            lineSelected->velY = objectSelectedVelY;
+                // Atualização de velocidade
+                lineSelected->velX = objectSelectedVelX;
+                lineSelected->velY = objectSelectedVelY;
+            }
         } else if (shapeSelected != nullptr) {
-            // Mantém o elemento na mesma posição
-            shapeSelected->coord.x = absoluteMouseX;
-            shapeSelected->coord.y = absoluteMouseY;
+            if (distance(shapeSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= shapeSelected->Size * 1.3f) {
+                // Mantém o elemento na mesma posição
+                shapeSelected->coord.x = absoluteMouseX;
+                shapeSelected->coord.y = absoluteMouseY;
 
-            // Atualização de velocidade
-            shapeSelected->VelX = objectSelectedVelX;
-            shapeSelected->VelY = objectSelectedVelY;
+                // Atualização de velocidade
+                shapeSelected->VelX = objectSelectedVelX;
+                shapeSelected->VelY = objectSelectedVelY;
+            }
         }
     }
 
@@ -253,14 +301,39 @@ void ApplicationRender(int deltatime) {
     window->Clear();
 
     // Render
+    
+    // Informações
+
+    // Render distance
+    double renderDistanceX, renderDistanceY;
+    camera->GetRenderDistance(window, renderDistanceX, renderDistanceY);
+
+    renderDistanceX += renderDistanceX * 1.1f + 50;
+    renderDistanceY += renderDistanceY * 1.1f + 50;
 
     // Renderizando todas as formas
     for (auto shape : shapeList) {
+        if (shape == nullptr) {
+            continue;
+        }
+        
+        if (abs(camera->x - shape->coord.x) > renderDistanceX || abs(camera->y - shape->coord.y) > renderDistanceY) {
+            continue;
+        }
+
         shape->Render(window, camera);
     }
 
     // Renderizando todas as linhas
     for (auto line : lineList) {
+        if (line == nullptr) {
+            continue;
+        }
+
+        if (abs(camera->x - line->coord.x) > renderDistanceX || abs(camera->y - line->coord.y) > renderDistanceY) {
+            continue;
+        }
+
         line->Render(window, camera);
     }
 

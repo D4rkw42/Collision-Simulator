@@ -8,12 +8,12 @@
 
 // eventos separador por tipo
 
-void EventMouseClick(SDL_Event event);
-void EventMouseMove(SDL_Event event);
-void EventMouseScrolling(SDL_Event event);
+void EventMouseClick(const SDL_Event& event);
+void EventMouseMove(const SDL_Event& event);
+void EventMouseScrolling(const SDL_Event& event);
 
-void EventKeyUp(SDL_Event event);
-void EventKeyDown(SDL_Event event);
+void EventKeyUp(const SDL_Event& event);
+void EventKeyDown(const SDL_Event& event);
 
 // gerenciar todos os eventos
-void HandleEvents(SDL_Event event);
+void HandleEvents(const SDL_Event& event);

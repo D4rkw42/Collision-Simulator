@@ -17,7 +17,7 @@ using random = effolkronium::random_static;
 
 // eventos separador por tipo
 
-void EventMouseClick(SDL_Event event) {
+void EventMouseClick(const SDL_Event& event) {
     // for utility
     // Posições absolutas do mouse
     double mouseAbsoluteX, mouseAbsoluteY;
@@ -47,6 +47,10 @@ void EventMouseClick(SDL_Event event) {
     // Buscando novas peças para serem selecionadas
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT) {
         for (auto line : lineList) {
+            if (line == nullptr) {
+                continue;
+            }
+
             if (distance(line->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= line->length / 2) {
                 lineSelected = line;
                 shapeSelected = nullptr;
@@ -62,6 +66,10 @@ void EventMouseClick(SDL_Event event) {
 
         // Seleção de forma terá prioridade
         for (auto shape : shapeList) {
+            if (shape == nullptr) {
+                continue;
+            }
+
             if (distance(shape->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= shape->Size) {
                 shapeSelected = shape;
                 lineSelected = nullptr;
@@ -84,11 +92,16 @@ void EventMouseClick(SDL_Event event) {
         lineSelected = nullptr;
         shapeSelected = nullptr;
 
-        // deletando objetos caso sejam encontrados
+        // deletando objetos caso sejam encontradosconst SDL_Event&
 
         for (int i = 0; i < lineList.size(); ++i) {
-            if (distance(lineList[i]->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= lineList[i]->length / 2) {
-                lineList.erase(lineList.begin() + i);
+            if (lineList[i] == nullptr) {
+                continue;
+            }
+
+            if (distance(lineList[i]->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= (lineList[i]->length / 2) * 1.2f) {
+                // lineList.erase(lineList.begin() + i);
+                lineList[i] = nullptr;
                 objectFound = true;
                 break;
             }
@@ -96,8 +109,13 @@ void EventMouseClick(SDL_Event event) {
 
         if (!objectFound) {
             for (int i = 0; i < shapeList.size(); ++i) {
-                if (distance(shapeList[i]->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= shapeList[i]->Size) {
-                    shapeList.erase(shapeList.begin() + i);
+                if (shapeList[i] == nullptr) {
+                    continue;
+                }
+
+                if (distance(shapeList[i]->coord, Coord { mouseAbsoluteX, mouseAbsoluteY }) <= shapeList[i]->Size * 1.2f) {
+                    // shapeList.erase(shapeList.begin() + i);
+                    shapeList[i] = nullptr;
                     objectFound = true;
                     break;
                 }
@@ -105,7 +123,7 @@ void EventMouseClick(SDL_Event event) {
         }
 
         // cria um novo elemento
-        const int numberOfVertices = random::get<int>(1, 12);
+        const int numberOfVertices = random::get<int>(1, 8);
         
         const double invokedElementVelX = random::get<double>(-0.6f, 0.6f);
         const double invokedElementVelY = random::get<double>(-0.6f, 0.6f);
@@ -125,13 +143,13 @@ void EventMouseClick(SDL_Event event) {
     }
 }
 
-void EventMouseMove(SDL_Event event) {
+void EventMouseMove(const SDL_Event& event) {
     // atualizando definições de mouse
     mouse.x = event.motion.x;
     mouse.y = event.motion.y;
 }
 
-void EventMouseScrolling(SDL_Event event) {
+void EventMouseScrolling(const SDL_Event& event) {
     // alterando o zoom da câmera
     if (event.wheel.y < 0) {
         camera->ZoomOut();
@@ -140,7 +158,7 @@ void EventMouseScrolling(SDL_Event event) {
     }
 }
 
-void EventKeyUp(SDL_Event event) {
+void EventKeyUp(const SDL_Event& event) {
     // Atualizando o estado de todas as teclas
     std::shared_ptr<Key> keyTarget = GetKey(keyList, event.key.keysym.scancode);
 
@@ -159,7 +177,7 @@ void EventKeyUp(SDL_Event event) {
     }
 }
 
-void EventKeyDown(SDL_Event event) {
+void EventKeyDown(const SDL_Event& event) {
     // Atualizando o estado de todas as teclas
     std::shared_ptr<Key> keyTarget = GetKey(keyList, event.key.keysym.scancode);
 
@@ -171,7 +189,7 @@ void EventKeyDown(SDL_Event event) {
 }
 
 // gerenciar todos os eventos
-void HandleEvents(SDL_Event event) {
+void HandleEvents(const SDL_Event& event) {
     switch (event.type) {
         case SDL_MOUSEBUTTONUP:
         case SDL_MOUSEBUTTONDOWN:

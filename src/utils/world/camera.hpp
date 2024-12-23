@@ -11,11 +11,11 @@
 #include "utils/system/mouse.hpp"
 
 // definições
-const double MAX_ZOOM = 3.f; // zoom máximo permitido
-const double MIN_ZOOM = 0.4f; // zoom mínimo permitido
-const double ZOOM_INITIAL = 0.8f; // zoom inicial
+constexpr double MAX_ZOOM = 3.f; // zoom máximo permitido
+constexpr double MIN_ZOOM = 0.4f; // zoom mínimo permitido
+constexpr double ZOOM_INITIAL = 0.8f; // zoom inicial
 
-const double ZOOM_MOD = 0.15f; // alteração do zoom
+constexpr double ZOOM_MOD = 0.15f; // alteração do zoom
 
 // dados que serão passados como referência dos cálculos
 struct ObjectInfo {
@@ -30,10 +30,10 @@ class Camera {
         Camera(int x, int y);
 
         // Cálculo de viewport
-        void Viewport(std::shared_ptr<Window> window, ObjectInfo info, double& x, double& y, double& size);
+        void Viewport(const std::shared_ptr<Window>& window, const ObjectInfo& info, double& x, double& y, double& size);
 
         // controle de posição
-        void UpdateCameraPosition(Mouse mouse);
+        void UpdateCameraPosition(const Mouse& mouse);
 
         void ZoomIn(void); // aumenta o zoom
         void ZoomOut(void); // dimunui o zoom
@@ -41,8 +41,8 @@ class Camera {
         // funções auxiliares
 
         
-        void GetRenderDistance(std::shared_ptr<Window> window, double& dist_horiz, double& dist_vert); // obtém o quanto do mundo a câmera está capturando (com acréscimo de 10%)
-        void GetAbsolutePosition(std::shared_ptr<Window> window, double x, double y, double& absoluteX, double& absoluteY); // a posição real de um ponto x, y a partir da posição da câmera
+        void GetRenderDistance(const std::shared_ptr<Window>& window, double& dist_horiz, double& dist_vert); // obtém o quanto do mundo a câmera está capturando (com acréscimo de 10%)
+        void GetAbsolutePosition(const std::shared_ptr<Window>& window, double x, double y, double& absoluteX, double& absoluteY); // a posição real de um ponto x, y a partir da posição da câmera
 
     private:
         double zoom;
