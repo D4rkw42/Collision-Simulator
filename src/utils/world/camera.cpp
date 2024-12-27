@@ -47,6 +47,14 @@ void Camera::UpdateCameraPosition(const Mouse& mouse) {
         last_cam_x = this->x;
         last_cam_y = this->y;
     }
+
+    if (abs(this->x) > CAMERA_X_LIMIT) {
+        this->x = CAMERA_X_LIMIT * (this->x > 0 ? 1 : -1);
+    }
+
+    if (abs(this->y) > CAMERA_Y_LIMIT) {
+        this->y = CAMERA_Y_LIMIT * (this->y > 0 ? 1 : -1);
+    }
 }
 
 void Camera::ZoomIn(void) {

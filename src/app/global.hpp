@@ -7,6 +7,9 @@
 
 #include "utils/world/camera.hpp"
 
+// estados
+inline bool gravity = false;
+
 // utilidades
 inline std::shared_ptr<Camera> camera = std::make_shared<Camera>(0, 0);
 

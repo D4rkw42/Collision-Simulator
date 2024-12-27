@@ -12,10 +12,13 @@
 
 // definições
 constexpr double MAX_ZOOM = 3.f; // zoom máximo permitido
-constexpr double MIN_ZOOM = 0.4f; // zoom mínimo permitido
-constexpr double ZOOM_INITIAL = 0.8f; // zoom inicial
+constexpr double MIN_ZOOM = 0.1f; // zoom mínimo permitido
+constexpr double ZOOM_INITIAL = 0.6f; // zoom inicial
 
 constexpr double ZOOM_MOD = 0.15f; // alteração do zoom
+
+constexpr int CAMERA_X_LIMIT = 3000;
+constexpr int CAMERA_Y_LIMIT = 3000;
 
 // dados que serão passados como referência dos cálculos
 struct ObjectInfo {

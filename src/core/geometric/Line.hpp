@@ -72,14 +72,6 @@ class Line {
 
         // Faz a renderização de uma linha genérica
         static void RenderLine(const std::shared_ptr<Window>& window, const std::shared_ptr<Camera>& camera, const Coord& coord, double length, double angle, const RGBA& color);
-
-        // static std::array<Coord, 2> FindLineLimits(double x, double y, double angle, double length); // retorna os pontos limite de uma semireta
-        // static Coord FindLineIntersection(const std::shared_ptr<Line>& origin, const std::shared_ptr<Line>& target); // encontra a interseção entre duas semiretas
-
-        // static Vec2D GetLineLawCoeficients(const std::shared_ptr<Line>& line); // obtém os coeficientes da lei da reta
-        // static bool IsPointAtLine(const Coord& coord, const std::shared_ptr<Line>& line); // verifica se um ponto pertence a uma reta
-
-        // static bool LineCollision(const std::shared_ptr<Line>& origin, const std::shared_ptr<Line>& target); // verifica se duas semiretas estão colidindo
         
 };
 

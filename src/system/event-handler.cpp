@@ -85,7 +85,7 @@ void EventMouseClick(const SDL_Event& event) {
     }
 
     // Fazendo a invocação de peças e elementos aleatórios
-    if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT && GetKeyState(keyList, "LEFT_SHIFT").hold == true) {
+    if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT && GetKeyState(keyList, "LEFT_SHIFT").hold) {
         bool objectFound = false;
 
         // deselecionando elementos por segurança e funcionalidade
@@ -135,9 +135,11 @@ void EventMouseClick(const SDL_Event& event) {
 
         if (!objectFound) {
             if (numberOfVertices == 1 || numberOfVertices == 2) {
-                CreateLineToList(lineList, Coord { mouseAbsoluteX, mouseAbsoluteY }, invokedElementVelX, invokedElementVelY, invokedElementAngleVel, invokedElementSize * 2, invokedElementAngle);
+                CreateLineToList(lineList, Coord { mouseAbsoluteX, mouseAbsoluteY }, invokedElementVelX, invokedElementVelY, invokedElementAngleVel, invokedElementSize * 6, invokedElementAngle);
+                std::cout << "[Collision Simulator] You have spanwed a segment at (" << int(mouseAbsoluteX) << ", " << int(mouseAbsoluteY) << ")." << "\n";
             } else {
                 CreateShapeToList(shapeList, numberOfVertices, invokedElementSize, Coord { mouseAbsoluteX, mouseAbsoluteY }, invokedElementAngle, invokedElementVelX, invokedElementVelY, invokedElementAngleVel);
+                std::cout << "[Collision Simulator] You have spanwed a shape at (" << int(mouseAbsoluteX) << ", " << int(mouseAbsoluteY) << ")." << "\n";
             }
         }
     }
@@ -174,6 +176,28 @@ void EventKeyUp(const SDL_Event& event) {
         shapeSelected = nullptr;
 
         isElementSelected = false;
+    }
+
+    // deletando todas as formas
+    if (event.key.keysym.scancode == SDL_SCANCODE_Q && GetKeyState(keyList, "LEFT_SHIFT").hold) {
+        lineSelected = nullptr;
+        shapeSelected = nullptr;
+
+        lineList.fill(nullptr);
+        shapeList.fill(nullptr);
+
+        std::cout << "[Collision Simulator] All elements have been cleared." << "\n";
+    }
+
+    // ativando e desativando gravidade
+    if (event.key.keysym.scancode == SDL_SCANCODE_G && GetKeyState(keyList, "LEFT_SHIFT").hold) {
+        gravity = !gravity;
+        
+        if (gravity) {
+            std::cout << "[Collision Simulator] You have toggled gravity to on."  << "\n";
+        } else {
+            std::cout << "[Collision Simulator] You have toggled gravity to off." << "\n";
+        }
     }
 }
 

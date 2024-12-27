@@ -25,6 +25,8 @@ void ApplicationInitialize(void) {
 
     // Registrando keys
     RegisterNewKey(keyList, SDL_SCANCODE_LSHIFT, "LEFT_SHIFT");
+    RegisterNewKey(keyList, SDL_SCANCODE_Q, "Q");
+    RegisterNewKey(keyList, SDL_SCANCODE_G, "G");
 }
 
 void ApplicationQuit(void) {
@@ -211,7 +213,28 @@ void ApplicationUpdate(int deltatime) {
             shape->accY = 0;
         }
 
+        // gravidade
+        if (gravity) {
+            shape->VelY += GRAVITY_FORCE * 0.5f;
+        }
+
         shape->Update(deltatime);
+
+        // gravidade
+        if (gravity) {
+            shape->VelY += GRAVITY_FORCE * 0.5f;
+        }
+
+        // Limite de movimento
+        if (abs(shape->coord.x) > ELEMENT_X_LIMIT) {
+            shape->coord.x = ELEMENT_X_LIMIT * (shape->coord.x > 0 ? 1 : -1);
+            shape->VelX *= -1;
+        }
+
+        if (abs(shape->coord.y) > ELEMENT_Y_LIMIT) {
+            shape->coord.y = ELEMENT_Y_LIMIT * (shape->coord.y > 0 ? 1 : -1);
+            shape->VelY *= -1;
+        }
     }
 
     // atualizando todas as linhas
@@ -226,7 +249,28 @@ void ApplicationUpdate(int deltatime) {
             line->accY = 0;
         }
 
+        // gravidade
+        if (gravity) {
+            line->velY += GRAVITY_FORCE * 0.5f;
+        }
+
         line->Update(deltatime);
+
+        // gravidade
+        if (gravity) {
+            line->velY += GRAVITY_FORCE * 0.5f;
+        }
+
+        // Limite de movimento
+        if (abs(line->coord.x) > ELEMENT_X_LIMIT) {
+            line->coord.x = ELEMENT_X_LIMIT * (line->coord.x > 0 ? 1 : -1);
+            line->velX *= -1;
+        }
+
+        if (abs(line->coord.y) > ELEMENT_Y_LIMIT) {
+            line->coord.y = ELEMENT_Y_LIMIT * (line->coord.y > 0 ? 1 : -1);
+            line->velY *= -1;
+        }
     }
 
     // Colorindo linhas/formas selecionadas
@@ -341,6 +385,10 @@ void ApplicationRender(int deltatime) {
     // Renderizando informação do FPS
     Text FPSInfo = CreateText(std::string("FPS: ") + std::to_string(FPS), 16, TEXT_WHITE, TEXT_BOLD, "arial");
     FPSInfo.Render(window, 38, 20);
+
+    // Renderizando posição atual da câmera:
+    Text CameraPosInfo = CreateText(std::to_string(int(camera->x)) + ", " + std::to_string(int(camera->y)), 14, TEXT_WHITE, TEXT_NORMAL, "arial");
+    CameraPosInfo.Render(window, 40, 55);
 
     // Renderiza os gráficos
     window->Render();
