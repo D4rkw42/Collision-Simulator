@@ -4,6 +4,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "system/global.hpp"
 #include "config/config.hpp"
 
 #include "app/application.hpp"
@@ -22,9 +23,8 @@ unsigned long CurrEpoch = 0;
 unsigned long LastEpoch = EpochTime;
 
 int FrameRateCount = 0;
-
 int FPSCountTime = 0;
-int LastFPS = 0;
+int FPSCount = 0;
 
 int main(int argc, char* argv[]) {
     // Initialização
@@ -54,9 +54,9 @@ int main(int argc, char* argv[]) {
 
         if (FrameRateCount >= 1000 / FRAME_RATE) {
             FrameRateCount = 0;
-            ApplicationRender(deltatime);
+            FPSCount++;
 
-            LastFPS++;
+            ApplicationRender(deltatime);
         }
 
         // contagem de fps
@@ -65,7 +65,8 @@ int main(int argc, char* argv[]) {
 
         if (FPSCountTime >= 1000) {
             FPSCountTime = 0;
-            LastFPS = 0;
+            FPS = FPSCount;
+            FPSCount = 0;
         }
 
         // For convinience

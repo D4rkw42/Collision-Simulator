@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 17)
 # dependencies
 
 find_package(SDL2 CONFIG REQUIRED) # SDL.h library
-find_package(SDL2_image CONFIG REQUIRED) # SDL_image.h library
+find_package(SDL2_ttf CONFIG REQUIRED) # SDL_ttf.h library
 find_package(nlohmann_json CONFIG REQUIRED) # nlohmann::json library
 find_package(effolkronium_random CONFIG REQUIRED) # effolkronium::random library
 
@@ -38,6 +38,7 @@ add_executable(
 
     src/config/SDL2/config.cpp
     src/config/SDL2/graphics/Window.cpp
+    src/config/SDL2/graphics/text.cpp
     
     src/app/application.cpp
     
@@ -58,6 +59,6 @@ target_link_libraries(
     geometric-collisions-simulator PRIVATE
 
     ${SDL2_LIBRARIES}
-    SDL2_image::SDL2_image
+    SDL2_ttf::SDL2_ttf
     nlohmann_json::nlohmann_json
     effolkronium_random)

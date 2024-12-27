@@ -9,6 +9,7 @@
 #include "config/config.hpp"
 
 #include "config/SDL2/graphics/Window.hpp"
+#include "config/SDL2/graphics/text.hpp"
 
 #include "app/global.hpp"
 
@@ -239,9 +240,9 @@ void ApplicationUpdate(int deltatime) {
 
     // Atualiza a velocidade dos objetos selecionados com base no movimento do mouse (grabbing)
 
-    const double OBJECT_SELECTED_VELOCITY_COEFFICIENT = 1.15f;
-    const double OBJECT_SELECTED_MAX_VELOCITY = 3.f;
-    const double OBJECT_SELECTED_MIN_VELOCITY = 1.f;
+    const double OBJECT_SELECTED_VELOCITY_COEFFICIENT = 1.05f;
+    const double OBJECT_SELECTED_MAX_VELOCITY = 1.5f;
+    const double OBJECT_SELECTED_MIN_VELOCITY = 0.6f;
 
     double mouseVelAngle = atan2(mouse.velY, mouse.velX);
 
@@ -308,8 +309,8 @@ void ApplicationRender(int deltatime) {
     double renderDistanceX, renderDistanceY;
     camera->GetRenderDistance(window, renderDistanceX, renderDistanceY);
 
-    renderDistanceX += renderDistanceX * 1.1f + 50;
-    renderDistanceY += renderDistanceY * 1.1f + 50;
+    renderDistanceX = renderDistanceX * 1.1f + 50;
+    renderDistanceY = renderDistanceY * 1.1f + 50;
 
     // Renderizando todas as formas
     for (auto shape : shapeList) {
@@ -336,6 +337,10 @@ void ApplicationRender(int deltatime) {
 
         line->Render(window, camera);
     }
+
+    // Renderizando informação do FPS
+    Text FPSInfo = CreateText(std::string("FPS: ") + std::to_string(FPS), 16, TEXT_WHITE, TEXT_BOLD, "arial");
+    FPSInfo.Render(window, 38, 20);
 
     // Renderiza os gráficos
     window->Render();

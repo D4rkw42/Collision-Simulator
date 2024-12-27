@@ -36,14 +36,14 @@ void Line::Update(int deltatime) {
     this->velX += this->accX * 0.5f;
     this->velY += this->accY * 0.5f;
 
-    this->coord.x += this->velX;
-    this->coord.y += this->velY;
+    this->coord.x += this->velX * deltatime;
+    this->coord.y += this->velY * deltatime;
 
     // Segunda atualização de velocidade
     this->velX += this->accX * 0.5f;
     this->velY += this->accY * 0.5f;
 
-    this->angle += this->velAng;
+    this->angle += this->velAng * deltatime;
 
     if (this->angle > rad(360)) {
         this->angle -= rad(360);

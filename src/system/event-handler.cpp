@@ -125,11 +125,11 @@ void EventMouseClick(const SDL_Event& event) {
         // cria um novo elemento
         const int numberOfVertices = random::get<int>(1, 8);
         
-        const double invokedElementVelX = random::get<double>(-0.6f, 0.6f);
-        const double invokedElementVelY = random::get<double>(-0.6f, 0.6f);
+        const double invokedElementVelX = random::get<double>(-0.2f, 0.2f);
+        const double invokedElementVelY = random::get<double>(-0.2f, 0.2f);
 
         const double invokedElementAngle = random::get<double>(rad(0), rad(360));
-        const double invokedElementAngleVel = random::get<double>(-0.01f, 0.01f);
+        const double invokedElementAngleVel = random::get<double>(-0.005f, 0.005f);
 
         const double invokedElementSize = random::get<double>(20, 130);
 

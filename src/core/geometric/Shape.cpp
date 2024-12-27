@@ -55,14 +55,14 @@ void Shape::Update(int deltatime) {
     this->VelX += this->accX * 0.5f;
     this->VelY += this->accY * 0.5f;
 
-    this->coord.x += this->VelX;
-    this->coord.y += this->VelY;
+    this->coord.x += this->VelX * deltatime;
+    this->coord.y += this->VelY * deltatime;
 
     // Segunda atualização de velocidade
     this->VelX += this->accX * 0.5f;
     this->VelY += this->accY * 0.5f;
 
-    this->Angle += this->VelAng;
+    this->Angle += this->VelAng * deltatime;
 
     if (this->Angle > rad(360)) {
         this->Angle -= rad(360);

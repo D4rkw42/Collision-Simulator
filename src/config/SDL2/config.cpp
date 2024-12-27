@@ -1,13 +1,16 @@
 #include "config.hpp"
 
+#include <iostream>
+
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 bool SDL2_Initialize(void) {
-    bool SDLInitSuccess = SDL_Init(SDL_INIT_VIDEO);
-    bool SDLImageInitSuccess = IMG_Init(IMG_INIT_PNG);
+    bool SDLInitSuccess = SDL_Init(SDL_INIT_VIDEO) == 0;
+    bool SDLTTFInitSuccess = TTF_Init() == 0;
 
-    if (SDLInitSuccess || !SDLImageInitSuccess) {
+    if (!SDLInitSuccess || !SDLTTFInitSuccess) {
+        std::cout << "Failed to init SDL subsystems." << "\n";
         return false;
     }
 
@@ -15,6 +18,6 @@ bool SDL2_Initialize(void) {
 }
 
 void SDL2_Quit(void) {
-    IMG_Quit();
+    TTF_Quit();
     SDL_Quit();
 }
