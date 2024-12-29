@@ -4,7 +4,7 @@ project(
     Geometric-Collisions-Simulator
     VERSION 1.0
     DESCRIPTION "Simulação de colisões feita em C++ e SDL2, com base nos princípios da geometria analítica"
-    HOMEPAGE_URL "https://github.com/D4rkw42/geometric-collisions-simulator"
+    HOMEPAGE_URL "https://github.com/D4rkw42/Collision-Simulator"
     LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -13,7 +13,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(SDL2 CONFIG REQUIRED) # SDL.h library
 find_package(SDL2_ttf CONFIG REQUIRED) # SDL_ttf.h library
-find_package(nlohmann_json CONFIG REQUIRED) # nlohmann::json library
 find_package(effolkronium_random CONFIG REQUIRED) # effolkronium::random library
 
 include_directories(
@@ -60,5 +59,4 @@ target_link_libraries(
 
     ${SDL2_LIBRARIES}
     SDL2_ttf::SDL2_ttf
-    nlohmann_json::nlohmann_json
     effolkronium_random)
