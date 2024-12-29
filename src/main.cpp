@@ -19,12 +19,7 @@ using namespace std::chrono;
 
 SDL_Event Event;
 
-unsigned long CurrEpoch = 0;
 unsigned long LastEpoch = EpochTime;
-
-int FrameRateCount = 0;
-int FPSCountTime = 0;
-int FPSCount = 0;
 
 int main(int argc, char* argv[]) {
     // Initialização
@@ -39,36 +34,24 @@ int main(int argc, char* argv[]) {
     // App
     while (!SDL_QuitRequested()) {
         // definição do tempo decorrido
-        CurrEpoch = EpochTime;
-        int deltatime = CurrEpoch - LastEpoch;
+        static double deltatimeMilliseconds = 0;
+        int currEpoch = EpochTime;
 
-        LastEpoch = CurrEpoch;
+        deltatimeMilliseconds += currEpoch - LastEpoch;
+        LastEpoch = currEpoch;
 
-        // renderização e atualização
         SDL_PollEvent(&Event);
         HandleEvents(Event);
 
-        ApplicationUpdate(deltatime);
+        if (deltatimeMilliseconds >= 1000.f / FRAME_RATE) {
+            double deltatimeSeconds = deltatimeMilliseconds / 1000;
 
-        FrameRateCount += deltatime;
+            ApplicationUpdate(deltatimeMilliseconds);
+            ApplicationRender();
 
-        if (FrameRateCount >= 1000 / FRAME_RATE) {
-            FrameRateCount = 0;
-            FPSCount++;
-
-            ApplicationRender(deltatime);
+            deltatimeMilliseconds = 0;
         }
-
-        // contagem de fps
-
-        FPSCountTime += deltatime;
-
-        if (FPSCountTime >= 1000) {
-            FPSCountTime = 0;
-            FPS = FPSCount;
-            FPSCount = 0;
-        }
-
+        
         // For convinience
         SDL_Delay(1);
     }

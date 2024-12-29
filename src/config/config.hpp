@@ -9,7 +9,7 @@
 #define PROJECT_NAME "Geometric Collision Simulator"
 #define FRAME_RATE 60
 
-constexpr double GRAVITY_FORCE = 0.01f;
+constexpr double GRAVITY_FORCE = 0.08f;
 
 // configuração da parede para os elementos
 constexpr int ELEMENT_X_LIMIT = 2800;

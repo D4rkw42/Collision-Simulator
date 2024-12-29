@@ -149,6 +149,65 @@ void EventMouseMove(const SDL_Event& event) {
     // atualizando definições de mouse
     mouse.x = event.motion.x;
     mouse.y = event.motion.y;
+
+    // Posição absoluta do mouse na tela
+    double absoluteMouseX, absoluteMouseY;
+    camera->GetAbsolutePosition(window, mouse.x, mouse.y, absoluteMouseX, absoluteMouseY);
+
+    // Atualiza a velocidade dos objetos selecionados com base no movimento do mouse (grabbing)
+
+    const double OBJECT_SELECTED_VELOCITY_COEFFICIENT = 1.15f;
+    const double OBJECT_SELECTED_MAX_VELOCITY = 3.f;
+    const double OBJECT_SELECTED_MIN_VELOCITY = 1.2f;
+
+    double mouseVelAngle = atan2(mouse.velY, mouse.velX);
+
+    double objectSelectedVelX = mouse.velX * OBJECT_SELECTED_VELOCITY_COEFFICIENT * cos(mouseVelAngle);
+    double objectSelectedVelY = mouse.velY * OBJECT_SELECTED_VELOCITY_COEFFICIENT * sin(mouseVelAngle);
+
+    if (mouse.velX != 0) {
+        if (abs(objectSelectedVelX) < OBJECT_SELECTED_MIN_VELOCITY) {
+            objectSelectedVelX = objectSelectedVelX > 0 ? OBJECT_SELECTED_MIN_VELOCITY : -OBJECT_SELECTED_MIN_VELOCITY;
+        } else if (abs(objectSelectedVelX) > OBJECT_SELECTED_MAX_VELOCITY) {
+            objectSelectedVelX = objectSelectedVelX > 0 ? OBJECT_SELECTED_MAX_VELOCITY : -OBJECT_SELECTED_MAX_VELOCITY;
+        }
+
+        objectSelectedVelX *= cos(mouseVelAngle);
+    }
+
+    if (mouse.velY != 0) {
+        if (abs(objectSelectedVelY) < OBJECT_SELECTED_MIN_VELOCITY) {
+            objectSelectedVelY = objectSelectedVelY > 0 ? OBJECT_SELECTED_MIN_VELOCITY : -OBJECT_SELECTED_MIN_VELOCITY;
+        } else if (abs(objectSelectedVelY) > OBJECT_SELECTED_MAX_VELOCITY) {
+            objectSelectedVelY = objectSelectedVelY > 0 ? OBJECT_SELECTED_MAX_VELOCITY : -OBJECT_SELECTED_MAX_VELOCITY;
+        }
+
+        objectSelectedVelY *= sin(mouseVelAngle);
+    }
+
+    if (mouse.right.hold && isElementSelected) { 
+        if (lineSelected != nullptr) {
+            if (distance(lineSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= (lineSelected->length / 2) * 1.3f) {
+                // Atualização de velocidade
+                lineSelected->velX = objectSelectedVelX;
+                lineSelected->velY = objectSelectedVelY;
+
+                // Mantém o elemento na mesma posição
+                lineSelected->coord.x = absoluteMouseX;
+                lineSelected->coord.y = absoluteMouseY;
+            }
+        } else if (shapeSelected != nullptr) {
+            if (distance(shapeSelected->coord, Coord { absoluteMouseX, absoluteMouseY }) <= shapeSelected->Size * 1.3f) {
+                // Atualização de velocidade
+                shapeSelected->VelX = objectSelectedVelX;
+                shapeSelected->VelY = objectSelectedVelY;
+
+                // Mantém o elemento na mesma posição
+                shapeSelected->coord.x = absoluteMouseX;
+                shapeSelected->coord.y = absoluteMouseY;
+            }
+        }
+    }
 }
 
 void EventMouseScrolling(const SDL_Event& event) {
